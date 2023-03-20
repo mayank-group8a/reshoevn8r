@@ -1,0 +1,8 @@
+<script>
+  var productImagesCache = (function() {
+    {% assign all_products = collections['all'].products %}
+    var all_products = {{ all_products | json }};
+    
+    return all_products;
+  })();
+</script>

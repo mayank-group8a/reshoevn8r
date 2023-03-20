@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+  <head>
+    <script>(function () { function asyncLoad() { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s3.eu-west-1.amazonaws.com/production-klarna-il-shopify-osm/ebb4b9f8edac84b7e417f4fb67c62ab4f62a1b17/reshoevn8r-2.myshopify.com-1673488688217.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); }; if (window.attachEvent) { window.attachEvent('onload', asyncLoad); } else { window.addEventListener('load', asyncLoad, false); } })(); </script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
+    <meta name="referrer" content="origin">
+
+    <title>{{ page_title }}</title>
+
+    {{ content_for_header }}
+
+    {{ checkout_stylesheets }}
+    {{ checkout_scripts }}
+       
+    
+	{% comment %} Austin - 11/24/20 - updated per Wigzo's request {% endcomment %}
+    <script>
+      const hideCheckboxOnShippingMethod = () => {
+        var shippingMethodDiv = document.getElementsByClassName("section--shipping-method");
+
+        if(shippingMethodDiv.length > 0) {
+          document.querySelector("form.edit_checkout .step__sections .fieldset-description").style.display = "none";
+        } else {
+          let checkboxDiv = document.createElement("div");
+          checkboxDiv.innerHTML =
+            `
+              <div class="fieldset-description" sedata-buyer-accepts-marketing="">
+                <div class="section__content">
+                  <div class="checkbox-wrapper">
+                    <div class="checkbox__input">
+                      <input name="checko<p></p>ut[buyer_accepts_marketing]" type="hidden" value="0"><input class="input-checkbox" data-backup="buyer_accepts_marketing" data-trekkie-id="buyer_accepts_marketing_field" type="checkbox" value="1" checked="checked" name="checkout[buyer_accepts_marketing]">
+                    </div>
+                    <label class="checkbox__label" for="checkout_buyer_accepts_marketing">
+                      I agree to receive promotional text messages at the phone number provided. Message & data rates may apply.
+                    </label>
+                  </div>
+                </div>
+              </div>
+       `;
+
+          document.querySelector("form.edit_checkout .step__sections").appendChild(checkboxDiv)
+        }
+      }
+      window.onload = hideCheckboxOnShippingMethod;
+    </script>
+    
+<!-- Start WunderKind tag. Deploy at the beginning of document head. -->
+<script>
+	(function(d) {
+		var e = d.createElement('script');
+		e.src = d.location.protocol + '//tag.wknd.ai/4699/i.js';
+		e.async = true;
+		d.getElementsByTagName("head")[0].appendChild(e);
+	}(document));
+</script>
+<!-- End WKND tag -->
+    
+    
+  
+  {% render 'shogun-head' %}
+</head>
+  <body>
+    {{ skip_to_content_link }}
+
+    <header class="banner" data-header role="banner">
+      <div class="wrap">
+        {{ content_for_logo }}
+      </div>
+    </header>
+
+    {{ order_summary_toggle }}
+    <div class="content" data-content>
+      <div class="wrap">
+        <div class="main">
+          <header class="main__header" role="banner">
+            {{ content_for_logo }}
+            {{ breadcrumb }}
+            {{ alternative_payment_methods }}
+          </header>
+          <main class="main__content" role="main">
+            {{ content_for_layout }}
+          </main>
+          <footer class="main__footer" role="contentinfo">
+            {{ content_for_footer }}
+          </footer>
+        </div>
+        <aside class="sidebar" role="complementary">
+          <div class="sidebar__header">
+            {{ content_for_logo }}
+          </div>
+          <div class="sidebar__content">
+            {{ content_for_order_summary }}
+          </div>
+        </aside>
+      </div>
+    </div>
+    
+    {{ 'ascii-only.min.js' | asset_url | script_tag }}
+
+    {{ tracking_code }}
+    
+    {% include 'zonos_shopifyplus_features' %}
+    
+<div data-rebuy-id="35757"></div>
+<script async src="https://cdn.rebuyengine.com/onsite/js/rebuy.js?shop=reshoevn8r-2.myshopify.com"></script>
+
+</body>
+</html>
+ 

@@ -1,0 +1,77 @@
+class customParameter {
+  constructor(paramKey) {
+    this.paramVariable = paramKey;
+  }
+  addDiscountProduct(productID, discountCode) {
+    this.productID = productID;
+    this.discountCode = discountCode;
+  }
+  applyDiscount() {
+    //const paramQuery = ;
+    const urlParams = new URLSearchParams(window.location.search);
+    const realParamValue = urlParams.get(this.paramVariable);
+
+    if (realParamValue.length > 0 && this.productID && this.discountCode == realParamValue) {
+      let discountItem = {
+        type: 'POST',
+        url: '/cart/add.js',
+        data: {
+          quantity: 1,
+          id: this.productID,
+          properties: {
+            'discount': realParamValue, 
+          }
+        },
+        dataType: 'json',
+      } 
+      
+      $.ajax(discountItem);
+    }
+
+  }
+}
+ 
+$( document ).ready(function() {
+  // Create new instance of customParameter, setting parameter key
+  let snapchatfeb20off = new customParameter("utm_campaign");
+  // Add a discount product to new customParameter, setting the product ID and url param value aka the "discount code"
+  snapchatfeb20off.addDiscountProduct(41283046867124, "exclusive20utmdiscount");
+  // Apply the discount
+  snapchatfeb20off.applyDiscount();
+  
+  // Create new instance of customParameter, setting parameter key
+  let snapchat20off = new customParameter("utm_campaign");
+  // Add a discount product to new customParameter, setting the product ID and url param value aka the "discount code"
+  snapchatfeb20off.addDiscountProduct(41283046867124, "exclusive20");
+  // Apply the discount
+  snapchatfeb20off.applyDiscount();
+  
+  // Create new instance of customParameter, setting parameter key
+  let unbreakablekicks = new customParameter("utm_campaign");
+  // Add a discount product to new customParameter, setting the product ID and url param value aka the "discount code"
+  unbreakablekicks.addDiscountProduct(41283046867124, "unbreakablekicks");
+  // Apply the discount
+  unbreakablekicks.applyDiscount();
+  
+  // Create new instance of customParameter, setting parameter key
+  let nochaser = new customParameter("utm_campaign");
+  // Add a discount product to new customParameter, setting the product ID and url param value aka the "discount code"
+  nochaser.addDiscountProduct(41283046867124, "nochaser");
+  // Apply the discount
+  nochaser.applyDiscount();
+  
+  // Create new instance of customParameter, setting parameter key
+  let fighter = new customParameter("utm_campaign");
+  // Add a discount product to new customParameter, setting the product ID and url param value aka the "discount code"
+  nochaser.addDiscountProduct(41283046867124, "fighter");
+  // Apply the discount
+  nochaser.applyDiscount();
+  
+  
+  // DO NOT REMOVE
+  $(document).trigger('refresh-cart');
+});
+
+
+  
+ 

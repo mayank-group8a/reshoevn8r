@@ -1,0 +1,232 @@
+const ENABLE_FREE_GIFT = false;
+
+// MAKE SURE ARRAY FORMAT IS NOT BROKEN
+const SPENDING_THRESHOLDS = [
+  {
+    cartAmountRange: [0, 55],
+    alertOnly: true,
+    productHandle: 'microfiber-towel-soft-absorbent-washable-re8-towel'
+  },
+  {
+    cartAmountRange: [55, 5000],
+    freeGiftVariantId: 31782933692488,
+    productHandle: 'microfiber-towel-soft-absorbent-washable-re8-towel'
+  },
+];
+
+// EDIT CART MESSAGE as necessary, variables [DIFFERENCE_AMOUNT] and [PRODUCT_TITLE] should not be changed.
+const FREE_GIFT_MESSAGE = "You are only [DIFFERENCE_AMOUNT] away from unlocking your free [PRODUCT_TITLE]";
+
+(function() {  
+  function getCart() {
+    return $.getJSON('/cart.js');
+  }
+  
+  function getProduct(handle) {
+    return $.getJSON(`/products/${handle}.js`);
+  }  
+  
+  function refreshCart() {
+    $(document).trigger('refresh-cart');
+  }
+  
+  function addItemToCart(p_options) {
+    var data = {
+      "quantity": p_options.quantity,
+      "id": p_options.variant_id,
+    };
+
+    if (p_options.properties !== undefined) {
+      data['properties'] = p_options.properties
+    }
+    //console.log(data);
+
+    return new Promise(function(resolve, reject) {
+      $.ajax({
+        type: 'POST',
+        url: '/cart/add.js',
+        data: data,
+        dataType: 'json',
+        success: function(data) {
+          resolve(data);
+        },
+        error: function(error) {
+          reject(error);
+        }
+      });
+    });
+  }
+
+  function removeItemFromCart(p_options, qty) {
+    var updates = {};
+    updates[p_options.key] = qty;
+    
+    return new Promise(function(resolve, reject) {
+      $.ajax({
+        type: 'POST',
+        url: '/cart/update.js',
+        data: {updates},
+        dataType: 'json',
+        success: function(data) {
+          resolve(data);
+        },
+        error: function(error) {
+          reject(error);
+        }
+      });      
+    });
+  }
+  
+  function showCartMessage(threshold, difference_amount) {
+    getProduct(threshold.productHandle)
+    .then(function(product) {
+      var message = FREE_GIFT_MESSAGE;
+      message = message.replace('[DIFFERENCE_AMOUNT]', Shopify.formatMoney(difference_amount));
+      message = message.replace('[PRODUCT_TITLE]', product.title);
+      
+      var imageSrc = product.images[0].replace('.jpg', '_medium.jpg');
+      
+      var freeGiftProgressHtmlTemplate = `
+        <a href="/products/${product.handle}?variant=${threshold.freeGiftVariantId}" data-cart-item-href="">
+		  <img src="${imageSrc}" />
+		</a>
+        <div class="cart-drawer__item-content">
+          ${message}
+        </div>		  
+		`;
+      
+      if ($('.free-gift-progress').length) {
+        $('.free-gift-progress').html(freeGiftProgressHtmlTemplate);
+        setTimeout(function() {
+          $('.free-gift-progress').addClass('visible');          
+        }, 1000);
+      }
+      else {
+        $('.cart-drawer__item-list').append(`
+          <div class="cart-drawer__item free-gift-progress" data-cart-free-gift-progress>${freeGiftProgressHtmlTemplate}</div>
+		`);
+      }      
+    });
+  }
+  
+  function removeFreeGift(key, qty) {
+    return new Promise(function(resolve, reject) {
+      removeItemFromCart({key}, qty)
+      .then(resolve);
+    });
+  }
+  
+  function addFreeGift(freeGiftVariantId) {
+    return new Promise(function(resolve, reject) {
+      addItemToCart({
+        variant_id: freeGiftVariantId,
+        quantity: 1,
+        properties: {
+          "_autoAdded": true
+        }
+      })
+      .then(resolve);
+    });
+  }
+  
+  function disableFreeItemQuantity(cart) {
+    $.each(cart.items, function(index, item) {
+      if (item.line_price == 0) {
+        var $freeItem = $($('.cart-drawer__item')[index]);
+        $freeItem.find('.cart-drawer__item-quantity').prop('disabled', true);
+      }
+    });    
+  }
+  
+  function freegiftsInCart(cart) {
+    return _.filter(cart.items, function(item) {
+      return item.properties._autoAdded == 'true';
+    });
+  }
+  
+  function getMatchingFreegiftInCart(cart, variantId) {
+    return _.filter(cart.items, function(item) {
+      return item.variant_id == variantId && item.properties._autoAdded == 'true';
+    });
+  }
+  
+  function checkCartProgress(e) {
+    if (!ENABLE_FREE_GIFT) { //  && sessionStorage.getItem('geoIPCountry') != 'United States'
+      return;
+    }
+
+
+    console.log('//CHECK CART PROGRESS');
+    getCart()
+    .then(function(cart) {
+      var cart_total = cart.total_price;
+      
+      // Disable quantity and hide remove link for free items
+      disableFreeItemQuantity(cart);
+      
+      var freegiftItemsInCart = freegiftsInCart(cart);      
+      var freegiftVariantToAdd;      
+      
+      // Check which item qualifies
+      SPENDING_THRESHOLDS.forEach(function(threshold, thresholdIndex) {
+        $('.free-gift-progress').removeClass('visible');
+        $('.free-gift-progress').html(''); // clear message first
+        
+        //console.log(threshold);
+        var currencyRate = parseFloat(Shopify.currency.rate);
+        var min = Math.ceil(threshold.cartAmountRange[0] * currencyRate).toFixed(2) * 100, max = Math.ceil(threshold.cartAmountRange[1] * currencyRate).toFixed(2) * 100;
+        var tierMatch = cart_total >= min && cart_total < max;
+        
+        // Cart Message
+        if (threshold.alertOnly) {
+          if (tierMatch) {
+            var difference_amount = max - cart_total;
+            showCartMessage(threshold, difference_amount);
+            tierMatch = true;
+          }
+        }
+        
+        // Add/Remove Free gift
+        if (!threshold.alertOnly) {
+          var matchingGiftItemInCart = getMatchingFreegiftInCart(cart, threshold.freeGiftVariantId);
+          if (cart_total >= min) {
+            freegiftVariantToAdd = threshold.freeGiftVariantId;
+          }
+          else {
+            if (matchingGiftItemInCart.length > 0) {
+                console.log('Removing gift...');
+                removeFreeGift(matchingGiftItemInCart[0].key, 0).then(_.debounce(refreshCart, 100)); // Austin - changed from 100
+            }
+          }
+        }
+      });
+      
+      if (freegiftVariantToAdd !== undefined) {
+        var matchingGiftItemInCart = getMatchingFreegiftInCart(cart, freegiftVariantToAdd);
+        console.log(`Matching Gifts: [ ${matchingGiftItemInCart.map(e => `${e.id} (x${e.quantity})`).join(', ')} ]`);
+
+        if (matchingGiftItemInCart.length == 0) {
+            console.log('Adding a gift');
+            _.throttle(addFreeGift(freegiftVariantToAdd).then(_.debounce(refreshCart, 100)), 1000); // Austin - added a throttle check and from 100 to 200
+        }
+
+        if (matchingGiftItemInCart.length == 1) removeFreeGift(matchingGiftItemInCart[0].key, 1).then(console.log('Updating gift quantity to 1'));
+            
+        if (freegiftItemsInCart.length > 1) {
+            console.log('Removing a gift');
+            removeFreeGift(freegiftItemsInCart[freegiftItemsInCart.length - 1].key, 0).then(_.debounce(refreshCart, 100)); // Austin - changed from 100
+        } 
+      }
+    });
+  }
+  
+  $(document).ready(function() {
+    //if (sessionStorage.getItem('geoIPCountry') === 'United States') {
+      $(document).on('cart_update_done', _.debounce(checkCartProgress, 100)); // Austin - changed from 100
+      
+      $(document).on('drawer_close_done', _.debounce(function() {
+        $('.free-gift-progress').removeClass('visible');
+      }, 100));
+    //}
+  });
+})(jQuery);

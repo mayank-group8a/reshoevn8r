@@ -1,0 +1,259 @@
+{{ '//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css'  | stylesheet_tag }}
+{{ 'tipo.auction.css' | asset_url | stylesheet_tag }}
+
+{{ '//code.jquery.com/jquery-3.3.1.min.js' | script_tag }}
+{{ '//momentjs.com/downloads/moment.min.js' | script_tag }}
+{{ '//cdn.jsdelivr.net/npm/liquidjs/dist/liquid.min.js' | script_tag }}
+{{ '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js' | script_tag }}
+{{ '//unpkg.com/micromodal/dist/micromodal.min.js' | script_tag }}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+<script type="text/javascript">
+var alterTPAConfigs = TPAConfigs || {}
+var TPAConfigs = {"shop_url":"reshoevn8r-2.myshopify.com","shop_id":2428,"app_host":"https://auctions.tipo.io","settings":{"enable_app":false,"trans_buynow":"Buy now","trans_end_in":"Auction Ends In","trans_current_bid":"Current bid","trans_place_bid":"Place your bid","trans_current_winner":"Current winner","trans_username":"Username","trans_bid_amount":"Bid amount","trans_bid_time":"Bid time","trans_start_price":"Start price","trans_bid_now":"Bid now","trans_automatic_bid":"Automatic bid","trans_bid_history":"Bid history","trans_email":"Email","trans_time_left":"Time left","trans_there_is_no_bid":"There is no bid","trans_auction_ended":"The auction has ended","trans_login_to_bid":"You must {login|log in} to start bidding","trans_clock_days":"Days","trans_clock_hours":"Hours","trans_clock_minutes":"Minutes","trans_clock_seconds":"Seconds","hide_add_to_cart":"0","hide_price":"0","bid_history_column":["bid_amount","bid_time"],"bid_history_record_per_page":"5","timezone":"US/Arizona","trans_start_in":"Start at","trans_bids":"Bids","trans_current_price":"Current price","trans_bidder":"Bidder","trans_start_time":"Start time","trans_end_time":"Close time","trans_history_product":"Product","trans_history_bid_time":"Bid time","trans_history_status":"Status","trans_history_action":"Action","trans_history_status_running":"Running","trans_history_action_checkout":"Checkout","show_collection_countdown":"1","trans_history_heading":"Auction history","trans_history_empty":"Empty history","trans_automatic_bid_tooltip":"This is tooltip for automatic bid","trans_reserve_price":"Reserve price","trans_buyout_price":"Buyout price","trans_history_id":"ID","trans_history_highest_price":"Highest price","trans_history_start_price":"Start price","trans_history_start_time":"Start time","trans_history_username":"Username","trans_history_email":"Email","trans_history_bid_amount":"Bid amount","trans_history_status_win":"Win","trans_history_status_lost":"Lost","trans_history_action_detail":"Checkout","trans_history_action_view":"View","trans_history_auction_detail":"Detail #{id}","trans_history_my_bid":"My bid","trans_auction_success":"Place a bid successfully","trans_auction_invalid":"Your price is invalid","hide_atc_when_pending":"1","hide_atc_when_running":"1","hide_atc_when_stopped":"1","hide_price_when_pending":"1","hide_price_when_running":"1","hide_price_when_stopped":"1","trans_stop_auction_heading":"This auction has ended","trans_stop_auction_loser_message":""},"money_format":"${{amount}}","money_character":"$","selector":{"add_to_cart":"form #AddToCart-product-template, form #AddToCart, form #addToCart-product-template, form .product__add-to-cart-button, form .product-form__cart-submit, form .add-to-cart, form .cart-functions > button, form .productitem--action-atc, form .product-form--atc-button, form .product-menu-button-atc, form .product__add-to-cart, form .product-add, form .add-to-cart-button, form #addToCart, form .product-detail__form__action > button, form .product-form-submit-wrap > input, form .product-form input[type=\"submit\"], form input.submit, form .add_to_cart, form .product-item-quick-shop, form #add-to-cart, form .productForm-submit, form .add-to-cart-btn, form .product-single__add-btn, form .quick-add--add-button, form .product-page--add-to-cart, form .addToCart, form .product-form .form-actions, form .button.add, form button#add, form .addtocart, form .AddtoCart, form .product-add input.add, form button#purchase, form[action=\"/cart/add\"] button[type=\"submit\"], form .product__form button[type=\"submit\"], form #AddToCart--product-template, form .dynamic-checkout,.shopify-payment-button","price":"#ProductPrice-product-template,#ProductPrice,.product-price,.product__price—reg,#productPrice-product-template,.product__current-price,.product-thumb-caption-price-current,.product-item-caption-price-current,.grid-product__price,.product__price,span.price,span.product-price,.productitem--price,.product-pricing,span.money,.product-item__price,.product-list-item-price,p.price,div.price,.product-meta__prices,div.product-price,span#price,.price.money,h3.price,a.price,.price-area,.product-item-price,.pricearea,.collectionGrid .collectionBlock-info > p,#ComparePrice,.product--price-wrapper,.product-page--price-wrapper,.color--shop-accent.font-size--s.t--meta.f--main,.ComparePrice,.ProductPrice,.prodThumb .title span:last-child,.price,.product-single__price-product-template,.product-info-price,.price-money,.prod-price,#price-field,.product-grid--price,.prices,.pricing,#product-price,.money-styling,.compare-at-price,.product-item--price,.card__price,.product-card__price,.product-price__price,.product-item__price-wrapper,.product-single__price,.grid-product__price-wrap,a.grid-link p.grid-link__meta"}}
+TPAConfigs.customer = {
+'id': '{{customer.id}}',
+'email': '{{customer.email}}',
+'name': '{{customer.name}}'
+};
+TPAConfigs.moneyFormat = '{{ shop.money_format | replace:"'",'"' }}'
+TPAConfigs.money_character = '$'
+TPAConfigs.state = {}
+</script>
+
+<script type="text/javascript" src="{{ 'tipo.auction.plugin.js' | asset_url }}"></script>
+<script type="text/javascript" src="{{ 'tipo.auction.js' | asset_url }}" defer="defer"></script>
+
+<script type="text/javascript">
+{% if template contains 'product' %}
+TPAConfigs.product = {{ product | json }};
+    {% if product.metafields.tpa.config != blank %}
+        TPAConfigs.product.metafields = {{ product.metafields.tpa.config }}
+    {% endif %}
+{% endif %}
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+TPAConfigs = _objectSpread({}, TPAConfigs, {}, alterTPAConfigs);
+
+
+</script>
+
+<div class="tpa_modal micromodal-slide" id="stopAuctionModal" aria-hidden="true">
+  <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+    <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+      <header class="modal__header">
+        <h2 class="modal__title" id="modal-1-title">
+          The auction has been stopped
+        </h2>
+        <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+      </header>
+      <main class="modal__content" id="modal-1-content">
+        <p>
+          The auction has been closed.
+        </p>
+      </main>
+      <footer class="modal__footer">
+        <a href="#" class="modal__btn modal__btn-primary auction-checkout-button" target="_blank" data-id>Checkout</a>
+        <button class="modal__btn" data-micromodal-close aria-label="Close this dialog window">Close</button>
+      </footer>
+    </div>
+  </div>
+</div>
+
+
+<div class="tpa_content" data-auction-id="" style="display:none">
+  <div class="bid_info">
+  <div class="end_in">End in</div>
+  <div class="clock" style="margin:0;margin-top:2em;"></div>
+  <div class="detail">
+    <div class="grow bids">
+        <span class="label"></span>
+      	<span class="value"></span>
+    </div>
+    <div class="grow current_price">
+        <span class="label"></span>
+        <span class="value money"></span>
+    </div>
+    <div class="grow bidder">
+        <span class="label"></span>
+        <span class="value"></span>
+    </div>
+    <div class="grow start_price">
+        <span class="label"></span>
+        <span class="money value"></span>
+    </div>
+    <div class="grow reserve_price">
+        <span class="label"></span>
+        <span class="money value"></span>
+    </div>
+    <div class="grow buyout_price">
+        <span class="label"></span>
+        <span class="money value"></span>
+    </div>
+    <div class="grow start_time">
+        <span class="label"></span>
+        <span class="value"></span>
+    </div>
+    <div class="grow end_time">
+        <span class="label"></span>
+        <span class="value"></span>
+    </div>
+
+  </div>
+  <div class="clearfix"></div>
+  <div class="action">
+      <div class="your_bid">
+        <div class="bid_price_wrapper">
+        	<span class="prefix"></span>
+          	<input type="text" id="bid_price" name="bid_price">
+            <span class="control">
+              	<span class="bid-ctrl plus">+</span>
+          		<span class="bid-ctrl minus">-</span>
+          	</span>
+        </div>
+      </div>
+      <div class="bid_btn_wrapper">
+          <button id="bid" class="btn btn-primary btn--fill btn--regular btn--color">Bid now</button>
+      </div>
+
+      <label class="automatic_bid_wrapper tpa_checkbox">
+        <span class="automatic_bid_label"></span>
+        <input type="checkbox" id="automatic_bid" name="automatic_bid" >
+        <span tooltip="">?</span>
+        <span class="checkmark"></span>
+      </label>
+      <div class="message"></div>
+  </div>
+  </div>
+  <table class="bid_list">
+      <caption class="bid_history_label">Bid history</caption>
+      <thead>
+          <tr>
+              <th scope="col" class="username_label username_column">Username</th>
+              <th scope="col" class="email_label email_column">Email</th>
+              <th scope="col" class="bid_amount_label bid_amount_column">Bid amount</th>
+              <th scope="col" class="bid_time_label bid_time_column">Bid time</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+  </table>
+  <div class="pager"></div>
+</div>
+
+
+
+<script type="text/template" id="tpa-account">
+{% raw %}
+<div class="tpa-account">
+    <h2>{{settings.trans_history_heading}}</h2>
+    <div class="tpa-content">
+        {% if history.data.length > 0 %}
+            <table class="tipo-responsive">
+              <thead>
+                <tr>
+                  <th scope="col">{{ settings.trans_history_id }}</th>
+                  <th scope="col">{{ settings.trans_history_product }}</th>
+                  <th scope="col">{{ settings.trans_history_highest_price }}</th>
+                  <th scope="col">{{ settings.trans_history_start_price }}</th>
+                  <th scope="col">{{ settings.trans_history_start_time }}</th>
+                  <th scope="col">{{ settings.trans_history_action }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                  {% for record in history.data %}
+                  		{% assign auction_settings = record.settings | to_json %}
+                      <tr>
+                        <td data-label="{{ settings.trans_history_id }}"><a href="#" data-id="{{ record.id }}" class="view" data-target="tpa_modal" >#{{ record.id }}</a></td>
+                        <td data-label="{{ settings.trans_history_product }}"><a href="/products/{{ record.product_handle }}" target="_blank" >{{ record.product_title }}</a></td>
+                        <td data-label="{{ settings.trans_history_highest_price }}">{{ record.highest_amount | format_money }}</td>
+                        <td data-label="{{ settings.trans_history_start_price }}">{{ auction_settings.start_price | format_money }}</td>
+                        <td data-label="{{ settings.trans_history_start_time }}">{{ record.start_time }}</td>
+                        <td data-label="{{ settings.trans_history_action }}" class="action"><a href="#" data-id="{{ record.id }}" data-target="tpa_modal" class="view">{{ settings.trans_history_action_view }}</a></td>
+                      </tr>
+                  {% endfor %}
+              </tbody>
+            </table>
+            {% if history.numPage > 1 %}
+            <div class="tpa-paginate">
+                {% for i in (1..history.numPage) %}
+                    <span class="page auctions {% if history.curPage == i %} active {% endif %} " data-page="{{ i }}">{{ i }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% else %}
+            <h3 class="empty-history">{{settings.trans_history_empty}}</h3>
+        {% endif %}
+        <div class="detail"></div>
+    </div>
+    <div class="modal" id="tpa_modal">
+      <div class="modal_inner"></div>
+    </div>
+</div>
+{% endraw %}
+</script>
+
+<script type="text/template" id="tpa-history-auction-detail">
+{% raw %}
+    <div class="tpa-history-auction-detail">
+    	<h2>{{settings.trans_history_auction_detail | replace_id : auction_id }}</h2>
+        {% assign isShowUserName = settings.bid_history_column | include : 'username'  %}
+        {% assign isShowEmail = settings.bid_history_column | include : 'email'  %}
+        {% assign isBidAmount = settings.bid_history_column | include : 'bid_amount'  %}
+        {% assign isBidTime = settings.bid_history_column | include : 'bid_time'  %}
+    	<table class="tipo-responsive">
+          <thead>
+            <tr>
+              {% if isShowUserName %}<th scope="col">{{ settings.trans_history_username }}</th>{% endif %}
+              {% if isShowEmail %}<th scope="col">{{ settings.trans_history_email }}</th> {% endif %}
+              {% if isBidAmount %}<th scope="col">{{ settings.trans_history_bid_amount }}</th>{% endif %}
+              {% if isBidTime %}<th scope="col">{{ settings.trans_history_bid_time }}</th>{% endif %}
+              <th scope="col">{{ settings.trans_history_status }}</th>
+              <th scope="col">{{ settings.trans_history_action }}</th>
+            </tr>
+          </thead>
+          <tbody>
+              {% for record in history.data %}
+                  {% assign mybid = false %}
+                  {% assign is_later = record. %}
+              	  {% if record.email == TPAConfigs.customer.email %}
+                  		{% assign mybid = true %}
+                  {% endif %}
+                  {% assign isMyBid = history.data_mybid | include : record.id %}
+                  <tr class="{% if isMyBid %}active{% endif %}">
+                    {% if isShowUserName %}<td data-label="{{ settings.trans_history_username }}">{% if mybid %}{{settings.trans_history_my_bid}}{% else %}{{ record.username }}{% endif %}</td>{% endif %}
+                    {% if isShowEmail %}<td data-label="{{ settings.trans_history_email }}">{% if mybid %}{% else %}{{ record.email }}{% endif %}</td>{% endif %}
+                    {% if isBidAmount %}<td data-label="{{ settings.trans_history_bid_amount }}">{{ record.bid_amount | format_money }}</td>{% endif %}
+                    {% if isBidTime %}<td data-label="{{ settings.trans_history_bid_time }}">{{ record.bid_time }}</td>{% endif %}
+                    {% if forloop.first == true and history.curPage == 1 %}
+                    	{% assign is_later = record.end_time | is_later %}
+                    {% else %}
+                    	{% assign is_later = false %}
+                    {% endif %}
+                    <td data-label="{{ settings.trans_history_status }}">{% if record.win == '1' %} {{ settings.trans_history_status_win }} {% elsif is_later %}<a href="/products/{{ record.product_handle }}" target="_blank" >{{ settings.trans_history_status_running }}</a>{% else %}{{settings.trans_history_status_lost}} {% endif %}</td>
+                    <td data-label="{{ settings.trans_history_action }}" class="action">{% if record.win == '1' and mybid %}<a class="auction-checkout-button" href="#" data-id="{{ record.id }}" data-email="{{ record.email }}">{{ settings.trans_history_action_checkout }}</a>{% else %}--{% endif %}</td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+        {% if history.numPage > 1 %}
+        <div class="tpa-paginate">
+            {% for i in (1..history.numPage) %}
+                <span class="page detail {% if history.curPage == i %} active {% endif %} " data-page="{{ i }}" data-id="{{ history.data[0].auction_id }}">{{ i }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+{% endraw %}
+</script>
+
+
+
+
+

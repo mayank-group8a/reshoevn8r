@@ -1,0 +1,16 @@
+{% comment %}
+<div class="tpa-collection" data-id="{{product.id}}">
+    <div class="time">
+        <div class="label"></div>
+  		<div class="end_in"></div>
+        <div class="start_in"></div>
+  	</div>
+</div>
+{% endcomment %}
+<script type="text/javascript">
+  TPACollection = typeof TPACollection !== 'undefined' ? TPACollection : []
+  TPACollection[{{product.id}}] = {{ product | json }}
+  {% if product.metafields.tpa.config != blank %}
+      TPACollection[{{product.id}}].metafields = {{ product.metafields.tpa.config }}
+  {% endif %}
+</script>

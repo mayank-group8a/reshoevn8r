@@ -1,0 +1,143 @@
+<div class="how-to">
+ 
+  {%if page.metafields.accentuate.howtohero%}
+    <div class="sk-about-hero" style="background-image: url('{{page.metafields.accentuate.howtohero}})">
+      <h1>{{page.metafields.accentuate.howtotitle}}</h1>
+    </div>
+  {%endif%}
+ 
+  <div class="how-to-inner">
+    <div class="how-to-nav-wrap">
+  	<ul class="how-to-nav">
+    {% for link in linklists.how-to.links %}
+      <li>
+        <a id="how-to-link" class="how-to-nav-li-a" href="{{ link.url }}">{{ link.title }}</a>
+      </li>
+    {% endfor %}
+    </ul>
+    </div>
+    
+    {%if page.metafields.accentuate.video_title%}
+   		 <h2 style="margin-bottom: 8px">{{page.metafields.accentuate.video_title}}</h2> 
+     {%endif%}
+    
+    {%if page.metafields.accentuate.video_description%}
+    <p>{{page.metafields.accentuate.video_description}}</p>
+    {%endif%}
+ 
+    {%if page.metafields.accentuate.howtovideo%}
+     <div class="about-video" scrolling="yes">
+        <iframe id="video" class="about-iframe rte" src="{{page.metafields.accentuate.howtovideo}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+        </iframe>
+     </div>
+    {%endif%}
+     
+
+     <div class="step-by-step">
+       {%if page.metafields.accentuate.stepbysteptitle%}
+       <h3 class="step-by-step-title">{{page.metafields.accentuate.stepbysteptitle}}</h3>  
+       {%endif%}
+       
+       {%if page.metafields.accentuate.stepheader or page.metafields.accentuate.stepheader2%}
+       <div class="step-row">      		
+             <div class="step-col">
+               <h4 class="step-col-h">{{page.metafields.accentuate.stepheader}}</h4>  
+               <div class="step-img-wrap">
+                 <img src="{{page.metafields.accentuate.stepimg}}" />
+               </div>   
+               <div class="step-col-p">
+                 {{page.metafields.accentuate.stepdesc}}
+               </div>
+             </div>  
+         
+            <div class="step-col">
+               <h4 class="step-col-h">{{page.metafields.accentuate.stepheader2}}</h4>  
+               <div class="step-img-wrap">
+                 <img src="{{page.metafields.accentuate.stepimg2}}" />
+               </div>   
+               <div class="step-col-p">
+                 {{page.metafields.accentuate.stepdesc2}}
+               </div>
+             </div>      
+       </div>
+       {%endif%}
+       
+       {%if page.metafields.accentuate.stepheader3 or page.metafields.accentuate.stepheader4%}
+          <div class="step-row">      		
+               <div class="step-col">
+                 <h4 class="step-col-h">{{page.metafields.accentuate.stepheader3}}</h4>  
+                 <div class="step-img-wrap">
+                   <img src="{{page.metafields.accentuate.stepimg3}}" />
+                 </div>   
+                 <div class="step-col-p">
+                   {{page.metafields.accentuate.stepdesc3}}
+                 </div>
+               </div>  
+
+              <div class="step-col">
+                 <h4 class="step-col-h">{{page.metafields.accentuate.stepheader4}}</h4>  
+                 <div class="step-img-wrap">
+                   <img src="{{page.metafields.accentuate.stepimg4}}" />
+                 </div>   
+                 <div class="step-col-p">
+                   {{page.metafields.accentuate.stepdesc4}}
+                 </div>
+               </div>      
+         </div>
+       {%endif%}
+       
+       
+       
+       
+       
+       
+       {%if page.metafields.accentuate.cleaningtitle%}
+        <h3 class="step-by-step-title">{{page.metafields.accentuate.cleaningtitle}}</h3>  
+       {%endif%}
+      
+       {%if page.metafields.accentuate.brushimg or page.metafields.accentuate.brushimg2 or page.metafields.accentuate.brushimg3%}
+        <div class="article-img-row">        
+          <div class="three-img-row-img-div img-div">
+            <img src="{{page.metafields.accentuate.brushimg}}"/>
+            <p>{{page.metafields.accentuate.brushdesc}}</p>
+          </div>
+          
+           <div class="three-img-row-img-div img-div">
+             <img src="{{page.metafields.accentuate.brushimg2}}"/>
+             <p>{{page.metafields.accentuate.brushdesc2}}</p>
+          </div>
+          
+           <div class="three-img-row-img-div img-div">
+             <img src="{{page.metafields.accentuate.brushimg3}}"/>
+             <p>{{page.metafields.accentuate.brushdesc3}}</p>
+          </div>
+        </div>
+       {%endif%}
+     
+       
+     </div>  
+  </div> <!-- end of how to inner --> 
+
+  
+</div>
+
+
+{% schema %}
+{ "name":"How To",
+  "settings":[
+      { 
+      "type":"link_list",
+      "id":"how-to",
+      "label":"how-to"
+      }
+  ]
+}
+{%endschema%}
+
+
+
+<!--      <div>
+       <button id="play-button">play</button>
+       <button id="pause-button">pause</button>
+       <button id="stop-button">stop</button>
+     </div> -->

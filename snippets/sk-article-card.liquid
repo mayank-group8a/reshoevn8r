@@ -1,0 +1,55 @@
+<div class="sk-article-card card__wrapper card--article" data-animate>
+  
+  <a href="{{ article.url }}">
+    
+    
+    {% if article.image %}
+      {% assign article_image = article.image %}
+    {% else %}
+      {% assign article_image = article.products.first %}
+    {% endif %}
+
+    {% if article_image != blank %}
+      {% include 'card-image', type: article_image, grid_style: grid_style %}
+    {% endif %}
+    
+  </a>
+  
+    <div class="sk-article-card-info">
+      <div class="sk-article-card-info-inner">
+      {% if section.settings.blog_show_date %}
+        <h5 class="sk-article-card-time">
+          {{ article.published_at | time_tag: format: 'date' }}
+      	</h5>
+      {% endif %}
+      
+      
+      <a href="{{ article.url }}" class="sk-article-card-title">{{ article.title }}</a>
+      
+      
+      <div class="sk-article-cart-excerpt">
+        {% if article.excerpt.size > 0 %}
+        <p>
+          {{ article.excerpt }}
+        </p>
+        {% else %}
+         <p>
+          {{ article.content | strip_html | truncatewords: 20 }}
+        </p>
+        {% endif %}
+      </div>
+      
+      
+      
+      <a href="{{ article.url }}" class="card__read-more">
+        {{ 'blogs.article.read_more' | t }}
+        {% include 'icon-arrow-right' %}
+      </a>
+      
+    </div>
+      
+  </div>
+      
+      
+  
+</div>

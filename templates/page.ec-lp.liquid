@@ -1,0 +1,474 @@
+<!-- Executive Club Styles (can be added to theme.scss with some adjustment) -->
+<style>
+    .ec-container {
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 0 2rem;
+        margin: 3rem auto;
+    }
+
+    .ec-row {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        width: 100%;
+        padding: 1rem;
+        margin: 2rem 0;
+    }
+
+    .ec-col {
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: center;
+        align-items: center;
+        margin: 1rem .5rem;
+    }
+
+    .ec-col > h1, h2, h3, h4, h5, h6, a, p, span {
+        word-wrap: break-word !important;
+    }
+
+    .ec-hero {
+        width: 100%;
+        height: auto;
+    }
+
+    .ec-line {
+      width: 75%;
+      margin: 4rem auto;
+      border-top: 2px outset #f1f1f1;
+    }
+
+    .ec-product > h4, img, p {
+        margin: 1.25rem 0;
+    }
+
+    .ec-product-container {
+        width: 100%;
+        height: auto;
+        position: relative;
+        max-width: 435px;
+    }
+
+    .ec-product-check {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .ec-product-image {
+        max-width: 425px;
+        max-height: 425px;
+    }
+
+    .ec-product-check {
+        z-index: 10;
+        margin: 2rem 0;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: flex-end;
+    }
+
+    .ec-input[type="checkbox"] + .ec-label {
+        position: absolute;
+        width: 3rem;
+        height: 3rem;
+        border: 3px solid #555;
+        border-radius: 15%;
+        top: 2.5rem;
+        transform: translate(-50%, -50%);
+        transition: all ease-out 200ms;
+        text-indent: 5rem;
+        font: normal normal 1.5rem/3rem "Helvetica";
+        white-space: nowrap;
+        color: #555;
+        user-select: none;
+    }
+
+    .ec-input[type="checkbox"] + .ec-label:after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 1.5rem;
+        border-bottom: 3px solid #22b573;
+        border-left: 3px solid #22b573;
+        top: 25%;
+        left: 50%;
+        transform-origin: bottom left;
+        transform: rotate(-45deg);
+        opacity: 0;
+        transition: all ease-out 200ms;
+    }
+
+    .ec-label {
+	    border: 3px solid #22b573;
+    }
+
+    .ec-input[type="checkbox"]:checked + label:after {
+        opacity: 1;
+        width: 3.5rem;
+    }
+
+    .ec-check {
+        display: none !important;
+    }
+
+    .ec-btn {
+      display: block !important;
+      border: 3px solid black;
+      background: transparent;
+      width: 50%;
+      height: auto;
+      padding: 1.7rem 2rem !important;
+      font-family: apercu;
+      font-size: 1.5rem;
+      color: black;
+      letter-spacing: 2px;
+      max-width: 75rem;
+      text-transform: uppercase;
+      transition: 0.4s !important;
+    }
+
+    .ec-btn-form {
+        width: 50%;
+    }
+    
+    .ec-btn:hover {
+      background-color: black;
+      color: white;
+    }
+
+    #ec-exclusives > img {
+        margin: 1rem .25rem 0 .25rem;
+        max-width: 275px;
+        height: auto;
+    }
+
+    .ec-faq-container {
+        width: 80%;
+        margin: 1rem auto;
+    }
+
+    .ec-accordion {
+        cursor: pointer;
+        padding: 1rem;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        transition: 0.4s;
+    }
+
+    .ec-accordion:after {
+        content: '\002B';
+        color: rgb(99,99,99);
+        font-weight: bold;
+        float: right;
+        margin-left: .25rem;
+    }
+
+    .ec-accordion-active:after {
+        content: "\2212";
+    }
+
+    .ec-panel {
+        padding: 0 2rem;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+    }
+
+    .ec-modal {
+        display: none;
+        position: fixed;
+        z-index: 11;
+        padding-top: 5rem;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .ec-modal-content {
+        background-color: #fefefe;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: auto;
+        padding: 1.25rem;
+        border: 1px solid #888;
+        width: 40%;
+        text-align: center;
+    }
+
+    .ec-modal-close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .ec-modal-close:hover, .ec-modal-close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .ec-age-gate {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+    }
+
+    /*------ MEDIA QUERIES ------*/
+    @media only screen and (max-width: 649px) {
+        #ec-intro > p, a {
+            text-align: center;
+            padding-right: 0;
+        }
+
+        #ec-intro > a {
+            margin: 0 auto 0 auto;
+        }
+
+        .ec-btn, .ec-btn-form {
+            width: 75%;
+        }
+
+        .ec-modal-content {
+            width: 85%;
+        }
+    }
+  
+  	@media only screen and (max-width: 400px) {
+      .ec-product-image {
+          max-width: 350px;
+      }
+    }
+</style>
+
+<script>
+    window.theme = window.theme || {};
+    window.theme.strings = window.theme.strings || {};
+  
+    // Override default values of theme.strings for each template.
+    // Values are used by JavaScript only; Liquid must be updated separately
+    window.theme.strings.addToCart = {{ 'products.product.add_to_cart' | t | json }};
+    window.theme.strings.soldOut = {{ 'products.product.sold_out' | t | json }};
+    window.theme.strings.unavailable = {{ 'products.product.unavailable' | t | json }};
+</script>
+
+<!-- Hero Image -->
+<img class="ec-hero" src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/ec-lp-hero.png?v=1605028589">
+
+<!-- Flex Container for Content -->
+<div class="ec-container page-width">
+
+    <!-- Hero Text -->
+    <div class="ec-row">
+        <h3 class="text-center">We are excited to introduce you to the Reshoevn8r Executive Club, and offer you a chance to begin your entrepreneurial journey.</h3>
+    </div>
+
+    <!-- Intro & Video -->
+    <div class="ec-row">
+        <div id="ec-intro" class="ec-col" style="max-width: 450px; align-items: flex-start;">
+            <p style="padding-right: 2.5rem; font-size: 1.25em;">
+                This subscription based membership was created for all of you sneaker fanatics who want to generate an additional revenue stream and start your own shoe cleaning business for only $250! Times are tough right now, but the future is looking CLEAN.
+            </p>    
+        </div>
+
+        <div class="ec-col" style="max-width: 450px">
+          <video style="width: 100%;" controls autoplay><source src="https://dxgb50aj91plx.cloudfront.net/Executive-Club-Landing-Page-Intro.mp4"></video>
+        </div>
+    </div>
+
+    <!-- Divider Line -->
+    <div class="ec-line"></div>
+
+    <!-- Membership Products Intro -->
+    <h3 class="text-center" style="display: block;">What comes with with my membership?</h3>
+    
+    <!-- Membership Products & Details -->
+    <div class="ec-row">
+        <!-- Executive Kit -->
+        {% assign ec_kit = all_products['executive-cleaning-kit'] %}
+        {% render 'ec-product-template', product: ec_kit, title: 'CLEANING KIT', label: 'CONTENTS INCLUDE', atc: 'GET THE KIT', atc_state: true, desc: 'Reshoevn8r Executive Kit: Our most comprehensive cleaning bundle, valued at nearly $310. Includes carrying case for easy transport. Click Add to Cart below to purhcase the Kit and Membership or you can purchase just the kit <a href="https://reshoevn8r.com/products/executive-cleaning-kit">here.</a>' %}
+
+        <!-- Executive Membership -->
+        {% assign ec_mem = all_products['executive-membership-bronze'] %}
+        {% render 'ec-product-template', product: ec_mem, title: 'MEMBERSHIP PERKS', label: 'PROGRAM FEATURES', atc: 'BECOME A MEMBER', atc_state: false, desc: 'Created with young entrepreneurs in mind, the Executive Club Membership offers a number of resources and benefits to help you turn a profit! You can also purchase just the Executive Membership without needing to get the kit for $29.99 per month from <a href="https://reshoevn8r.com/products/executive-club-membership-w-o-kit-purchase">here.</a>' %}
+    </div>
+
+    <!-- Add To Cart Button -->
+    <div class="ec-row">
+        {% assign mem = all_products['executive-membership-bronze'] %}
+        {% assign kit = all_products['executive-cleaning-kit'] %}
+      
+      	{% assign usd_tag = 'USD ONLY' %}
+
+        {% if cart.currency.iso_code == 'USD' %}
+            {% assign cur_gate = false %}
+        {% else %}
+            {% assign cur_gate = true %}
+        {% endif %}
+
+        <button
+                id="ec-lp-atc"
+                style="width: 100%"
+                class="atc-trigger sk-atc sk-btn-primary"
+                {% if cur_gate %} disabled=true {% endif %}
+        >
+            {% if cur_gate %}
+          		USD ONLY
+          	{% else %}
+          		ADD TO CART
+          	{% endif %}
+        </button>
+
+        <script>
+            Shopify.addItem = async (data) => {
+                console.log(data);
+
+                try {
+                    const res = await fetch('/cart/add.js', {
+                        method: 'POST',
+                        body: data
+                    });
+
+                    console.log(res.json());
+                    refreshCart();
+                } catch(e) {
+                    console.warn(e);
+                }
+            }
+
+            document.querySelector('#ec-lp-atc').addEventListener('click', () => {
+                const kit = document.querySelector('form[data-productid="{{ kit.id }}"]');
+                const mem = document.querySelector('form[data-productid="{{ mem.id }}"]');
+
+                Shopify.addItem(new FormData(kit)).then(i => {
+                    console.log(i);
+
+                    Shopify.addItem(new FormData(mem)).then(j => {
+                        console.log(j);
+                        window.location.replace('/pages/executive-club-landing-page?cart=true');
+                    });
+                });
+
+                const forms = document.querySelectorAll('form[action="/cart/add"]');
+
+                /*forms.forEach(form => {
+                    Shopify.addItem(new FormData(form));
+                });*/
+            });
+        </script>
+    </div>
+
+    <!-- Exclusive Items Preview -->
+    <div class="ec-row">
+        <div class="ec-col">
+            <h4 class="text-center" style="max-width: 80%;">Executive Club Members will have exclusive access to the following members-only Reshoevn8r products:</h4>
+
+            <!-- Exclusive Item Images -->
+            <div id="ec-exclusives" class="ec-row">
+                <img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/ec-lp-product-tshirt.png?v=1605033116">
+                <img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/ec-lp-product-apron.png?v=1605033116">
+                <img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/ec-lp-product-hat.png?v=1605033116">
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="ec-row" style="margin-top: 0;">
+        <div class="ec-col" style="width: 100%;">
+            <h4 class="text-center" style="margin-bottom: 1rem;">Frequently Asked Questions</h4>
+
+            <div class="ec-faq-container">
+                <button class="ec-accordion" style="background-color: rgb(241,241,241)">Can I become a Certified Shoe Care Specialist without the membership plan?</button>
+                <div class="ec-panel" style="background-color: rgb(241,241,241)">
+                    <p>No unfortunately you would need to be a member to become a certified shoe care specialist.</p>
+                </div>
+
+                <button class="ec-accordion" style="background-color: white;">What is the product discount provided to club members?</button>
+                <div class="ec-panel">
+                    <p>The product discount is 20%</p>
+                </div>
+
+                <button class="ec-accordion" style="background-color: rgb(241,241,241)">Can I cancel my subscription at any time?</button>
+                <div class="ec-panel" style="background-color: rgb(241,241,241)">
+                    <p>Once you purchase a membership, you must retain it for at least 4 months after purchase. After that time, you can cancel.</p>
+                </div>
+
+                <button class="ec-accordion" style="background-color: white;">How challenging is the certification exam?</button>
+                <div class="ec-panel">
+                    <p>The certification exam is challenging if you are unfamiliar with our products and the proper cleaning techniques when cleaning different materials. However we do provide all of the information to pass the exam in our training manual, so as long as the training manual is studied you should learn everything you need to know to pass the exam.</p>
+                </div>
+
+                <button class="ec-accordion" style="background-color: rgb(241,241,241)">Can I create my own website and social media accounts for my business?</button>
+                <div class="ec-panel" style="background-color: rgb(241,241,241)">
+                    <p>You can create your own website and social media accounts but without jeopardizing our brand and trademark guidelines. This means you can create your own website and social media pages but you can't use "Reshoevn8r" as part of the name. For instance you could create a website and IG page called "Joe's Shoe Cleaning" but you cannot use a name like "Reshoevn8r Custom Shoe Cleaning" However in the tagline you could say Joe's Shoe Cleaning - Powered by Reshoevn8r.</p>
+                </div>
+
+                <button class="ec-accordion" style="background-color: white;">Can I purchase the Executive Kit without subscribing to the program?</button>
+                <div class="ec-panel">
+                    <p>Yes we offer the executive kit for those that want to be able to take advantage of using all of the products without subscribing to the membership</p>
+                </div>
+
+                <button class="ec-accordion" style="background-color: rgb(241,241,241)">If I purchase the kit, can I join the club at a later date?</button>
+                <div class="ec-panel" style="background-color: rgb(241,241,241)">
+                    <p>Yes you can subscribe at a later date if you like to take advantage of the benefits from the membership program.</p>
+                </div>
+              
+              	<button class="ec-accordion" style="background-color: rgb(241,241,241)">How old do you have to be to be a member?</button>
+                <div class="ec-panel" style="background-color: rgb(241,241,241)">
+                    <p>You need to be 18 to be an actual member</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Executive Membership Age Gate Modal -->
+<div class="ec-modal">
+    <div class="ec-modal-content">
+        <span class="ec-modal-close">&times;</span>
+
+        <div class="ec-col">
+            <p>Our Executive Club Membership is only available to customers 18 years old and above, and by checking this box you certify that you are older than 18 years of age.</p>
+
+            <div>
+                <input class="ec-input ec-check" type="checkbox" id="age-gate-check" name="age-gate-check" value="true" style="top: 0; left: 0; right: 0; bottom: 0; transform: translate(0, 0); position: unset;">
+                <label class="ec-label" for="age-gate-check" style="top: 0; left: 0; right: 0; bottom: 0; transform: translate(0, 0); position: unset;"></label>
+            </div>
+
+            <button id="age-gate-btn" class="ec-btn" aria-label="Add to Cart" name="add" disabled>Let's Go!</button>
+        </div>
+    </div>
+</div>
+
+<!-- Javascript and Handlers -->
+<script>
+    // ------ Accordion JavaScript ------
+    document.querySelectorAll('.ec-accordion').forEach(el => {
+        el.addEventListener('click', () => {
+            el.classList.toggle('ec-accordion-active');
+
+            let panel = el.nextElementSibling;
+
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + 'px';
+            }
+        });
+    });
+</script>

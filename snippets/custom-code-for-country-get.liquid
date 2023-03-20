@@ -1,0 +1,465 @@
+<script type="text/javascript">
+  	var myStorage = window.sessionStorage;
+  	let storage_coun_key = 'default';
+	let stored_coun_key     = getCountry();
+  	let country = "";	
+  	let ErrorMessage ='';
+    let ErrorFlag = 0;
+    function getCountry() {
+       return myStorage.getItem(storage_coun_key);
+    }
+  
+	$(function(){
+		//Call Geolizr event
+      //GeolizrAPI.addEventListener('geolizr.geoData', function(geoData) {
+        	//console.log('new call...',geoData);
+      //  	country = geoData.countryName;
+      //});
+      
+      	//init call
+      $(".shopify-payment-button__button").hide(); 
+      
+      	function onCountryFound() {
+            setCountry(stored_coun_key);
+        } 
+
+        function setCountry(new_coun) {
+            myStorage.setItem(storage_coun_key,new_coun);
+            stored_coun = new_coun;
+            return new_coun;
+        }
+       
+      
+      if (stored_coun_key) {
+            onCountryFound()
+        } else {
+            const fallback_coun = "ON";
+          //Use Geolizr	
+          //myStorage.setItem("geoIPCountry",country);
+          //stored_coun = fallback_coun;
+          //Use API Geo
+            $.ajax({
+                url: "https://api.ipgeolocation.io/ipgeo?apiKey=0f8e8a6e89c04289a9dad52a2625b8e5",
+                success: function(locationData) {
+                  country= locationData.country_name; 
+                  myStorage.setItem("geoIPCountry",country);
+                    onCountryFound();
+                },
+                error: function() {
+                    stored_coun = fallback_coun;
+                    onCountryFound();
+                }
+            });
+        }
+ 	   
+      //create blank responseArr
+      responseArr = [];	
+      
+      
+    
+    });
+  	//$(document).ready(function())
+  	$(function() {
+      
+       // clear warning message
+      resetDefault();
+      
+      function resetDefault() {
+  	     $("body #bytsvarianterror").html('');
+      }
+      
+      cardClass = '';
+      if($("div").hasClass("sk-product-card") || $("div").hasClass("sk-featured-product-card"))
+      {
+        var skuIdArr = [];
+      	if($("div").hasClass("sk-product-card")){
+        	cardClass = 'sk-product-card';  	
+          	$('.sk-product-card').each(function(key,obj){
+        		var id = $($(this).find('input[name ="id"]')).val();
+              	skuIdArr.push(id);
+            });
+          }
+        if($("div").hasClass("sk-featured-product-card")){
+        	cardClass = 'sk-featured-product-card';
+          $('.sk-featured-product-card').each(function(key,obj){
+            var id = $($(this).find('input[name ="id"]')).val();
+                skuIdArr.push(id);
+            });
+        }
+      
+        $.ajax({
+        	url: "https://reshoevn8r.bytestechnolab.com/collection_inventory.php?ts="+Date.now(),
+          data: {"country": myStorage.getItem("geoIPCountry"),"store_url":window.location.href,"skuIdArr":skuIdArr},
+          	method: "POST",
+          	crossDomain: true,
+       		headers: {
+         		"accept": "*/*",
+        	},
+       		success: function(inventoryData){
+              	responseArr = inventoryData;	
+              	set_exists(JSON.parse(responseArr));
+              	checkForCustomQty(cardClass, responseArr);
+       		},
+          error: onError,
+      	});
+      }
+      
+      productData = {{ product | json }};
+      data = JSON.parse(myStorage.getItem("geoIPGroup"));
+      
+      template = {{ template.name | json }};//product
+      inv = {{ section.settings.show_inventory_quantity | json }}
+      if(productData){
+        $.ajax({
+          //CheckInventoryForProduct rename need
+          url: "https://reshoevn8r.bytestechnolab.com/product_inventory.php",
+          data: {"product_id" : productData.id,"country": myStorage.getItem("geoIPCountry"),"store_url":window.location.href},
+          	method: "GET",
+          	crossDomain: true,
+       		headers: {
+         		"accept": "*/*",
+        	},
+       		success: function(inventoryData){
+              	responseArr = inventoryData;	
+              set_exists(JSON.parse(responseArr));
+              checkForQty();
+               
+       		},
+          error: onError,
+      	});
+      }
+        function set_exists(x) {
+            responseArr = x;
+          }
+        
+        function onError(xhr, errorType, exception) {
+            // clear warning message
+            resetDefault();
+            responseArr                = [];
+            set_exists(responseArr);
+          }
+        
+        function showVariantError(msg = '', from = '') 
+        {
+          $("body #bytsvarianterror").show();
+          if (from == 'showError')
+          {
+            $("body #bytsvarianterror").html(msg.toUpperCase());
+          	$("body #bytsvarianterror").css('color',"#ff5c3b");
+          }else{
+            $("body #bytsvarianterror").html(msg.toUpperCase());
+          	$("body #bytsvarianterror").css('color',"#a5a5a5");
+          }
+            	if (from == 'showError') {
+                  	$("body .Product__Info .ProductForm__AddToCart span:first").text("Add to cart");
+                } else {
+                  $("body .Product__Info .ProductForm__AddToCart span:first").text("Sold Out");
+                }
+         }
+        
+        
+        
+        function checkForQty(from = '') {
+    if(responseArr.BlockedSKUItems !== undefined && responseArr.CustomMessage !== undefined && responseArr.InventoryCustomMessage !== undefined && responseArr.InventoryMessages !== undefined && responseArr.NoTrack !== undefined && responseArr.Overselling !== undefined && responseArr.TotalAvailable !== undefined ){
+        if(responseArr.BlockedSKUItems.length > 0 || (!("0" in responseArr.TotalAvailable) && Object.keys(responseArr.TotalAvailable).length > 0)){
+            
+            productData = {{ product | json }};
+
+            var productId = productData?productData.id:"";
+            var productName = productData?productData.title:"";
+            var selectedVariantId = $(".product-form__master-select option:selected").val();
+
+            //return true or false
+            var blocked = responseArr.BlockedSKUItems?(responseArr.BlockedSKUItems).includes(parseInt(selectedVariantId)):"";
+            var notrack = responseArr.NoTrack?(responseArr.NoTrack).includes(parseInt(selectedVariantId)):""; 
+
+            if(responseArr.InventoryMessages!==undefined)
+            {
+                if(!notrack)
+                {
+
+                    if(blocked){
+                        $(".atc-trigger").attr("disabled",true);
+                        $(".atc-trigger").css('background','grey');
+                        $(".atc-trigger").css('border','none');
+                        $(".shopify-payment-button__button").attr("disabled",true); 
+                        $(".shopify-payment-button__button").find("button").attr("disabled",true);
+                        $("form :input").prop("disabled",true);
+                        ErrorMessage=responseArr.CustomMessage;
+                        ErrorFlag=1;
+
+                        // Austin - 11/14/20 - adding in console logging for determining if blocked logic is being triggered
+                        console.log(`Blocking purchase, custom msg => ${ErrorMessage}`);
+                    }else{
+                        $(".atc-trigger").removeAttr("disabled");
+                        $(".atc-trigger").css('background','#000');
+                        $(".atc-trigger").css('border','none');
+                        $(".shopify-payment-button__button").removeAttr("disabled"); 
+                        $(".shopify-payment-button__button").find("button").attr("disabled",false);
+                        $("form :input").prop("disabled",false);
+
+                        ErrorMessage=responseArr.InventoryMessages[selectedVariantId];
+                        ErrorFlag=0;
+
+                        // Austin - 11/14/20 - adding in console logging for determining if blocked logic is being triggered
+                        console.log(`Not blocking purchase, custom msg => ${ErrorMessage}`);
+                    }
+
+                    if(!blocked){
+                        var overselling = (responseArr.Overselling).includes(parseInt(selectedVariantId));
+
+                        if(!overselling && (responseArr.TotalAvailable[selectedVariantId]<=0 || (responseArr.TotalAvailable)[selectedVariantId]==undefined)){
+                            //.product-form__cart-submit
+                            $(".atc-trigger").attr("disabled",true);
+                            $(".atc-trigger").css('background','grey');
+                            $(".atc-trigger").css('border','none');
+                            $(".shopify-payment-button__button").attr("disabled",true);
+                            $(".shopify-payment-button__button").find("button").attr("disabled",true);
+                            $("form :input").prop("disabled",true);
+
+                            // Austin - 11/14/20 - adding in console logging for determining if blocked logic is being triggered
+                            console.log(`Blocking purchase, custom msg => ${ErrorMessage}`);
+
+                            ErrorMessage=responseArr.InventoryMessages[selectedVariantId];
+                            ErrorFlag=1;
+                            if((responseArr.TotalAvailable)[selectedVariantId]==undefined){
+                                ErrorMessage="Out of Stock";
+                                // Austin - 11/14/20 - adding in console logging for determining if blocked logic is being triggered
+                                console.log(`Out of stock purchase, custom msg => ${ErrorMessage}`);
+                            }
+                        }
+
+                        if(overselling && responseArr.TotalAvailable[selectedVariantId]<=0){
+                            $(".atc-trigger").attr("disabled",false);
+                            $(".atc-trigger").css('background','#000');
+                            $(".atc-trigger").css('border','none');
+                            $(".shopify-payment-button__button").attr("disabled",false); 
+                            $(".shopify-payment-button__button").find("button").attr("disabled",false);
+                            $("form :input").prop("disabled",false);
+
+                            ErrorMessage=responseArr.InventoryCustomMessage;
+                            ErrorFlag=0;
+                        }
+
+                    }
+
+                    if(from == '' || from == 'minus' || from == 'plsqty') {
+                        var radioVal = $( ".ProductForm__Variants input[type='radio']:checked" ).val();
+                        //var selectVal = $(".product-form")
+                        //console.log(selectVal);
+                        var varVal =  $(".selvariant [data-vtitle='"+radioVal+"']").val();
+                        var varText =  radioVal;
+                    } else if(from!= 'minus' && from!= 'plsqty') {
+                        var varVal =  $(".selvariant [data-vtitle='"+from+"']").val();
+                        var varText =  from;
+                    }
+                }//no track over
+            }
+
+            // clear warning message
+            resetDefault();
+              
+            var opavailable  = true;
+            var setCountry  = stored_coun;
+            var setVariant   = varVal;  
+            var selectedQty  = $("#Quantity-product-template").val();
+            var available = '';
+
+            if((responseArr.TotalAvailable)[selectedVariantId]!=undefined){
+                available = (responseArr.TotalAvailable)[selectedVariantId];
+            }
+            // handle the case of 1 less quantity value from textbox
+            
+            if(from == 'minus') {
+                selectedQty = parseInt(selectedQty) > 1 ? (parseInt(selectedQty) - 1) : 1;
+            } else if(from == 'plsqty') {
+                selectedQty = parseInt(selectedQty) + 1;
+            }
+            
+            if(parseInt(available)<parseInt(selectedQty) && from!=''){
+                if(parseInt(available)>0){
+                    alert('You can only add '+available+' '+productName+' to the cart.');
+                    $("#Quantity-product-template").val(parseInt(available));
+                }
+            }
+
+            // make add to cart button active 
+            $(".ProductForm__AddToCart").removeAttr("disabled");
+            $(".ProductForm__AddToCart").attr('data-action', 'add-to-cart');
+            $(".ProductForm__AddToCart").addClass("Button--primary");
+            $(".ProductForm__AddToCart").removeClass("Button--secondary");
+            $("body .Product__Info .ProductForm__AddToCart span:first").text("Add to cart");
+
+            showError = '';
+
+            //if selectedVariantId is undefined
+            if(selectedVariantId == undefined) {
+                showVariantError('There was no Product in the selection', 'showError');          
+            }
+
+            if(ErrorFlag==1){
+                showVariantError(ErrorMessage, 'showError');
+            }else{
+                showVariantError(ErrorMessage, '');
+
+            }
+
+
+            if(setVariant != undefined) {
+                if (Object.keys(responseArr[setLocation]).length > 0) {
+                    if (typeof responseArr[setLocation][setVariant] !== 'undefined') {
+                        if (typeof responseArr[setLocation][setVariant][ 'available'] !== 'undefined') {
+
+                            $("body .ProductMeta__Description #inputbytsvariantqty").val(responseArr[setLocation][setVariant]['available']);
+                            if (selectedQty > responseArr[setLocation][setVariant]['available']) {
+                                if (responseArr[setLocation][setVariant]['available'] == 0) {
+                                    showError = '';
+                                } else {
+                                    showError = 'showError';
+                                }
+
+                                if (varText != undefined & varText!='') {
+                                    showVariantError('You can only add '+responseArr[setLocation][setVariant]['available']+' '+productName+' - '+varText+' to the cart.', 'showError');
+                                } else {
+                                    showVariantError('You can only add '+responseArr[setLocation][setVariant]['available']+' '+productName+' to the cart.', 'showError');
+                                }
+
+                                return false;
+                            }
+                        }
+                    } else {
+                        $("body .ProductMeta__Description #inputbytsvariantqty").val(0);
+                        showVariantError('Quantity not available for selected variant!', '');
+                        return false;
+                    }
+                } else {
+                    $("body .ProductMeta__Description #inputbytsvariantqty").val(0);
+                    showVariantError('Quantity not available in country!', '');
+                    return false;
+                }  
+            }
+
+        }//if index 0 check  
+            //check for QTY over
+    }
+}
+        
+		
+        function checkForCustomQty(cardClass,responseArr){
+          
+          if(cardClass === "sk-featured-product-card"){
+          	if(responseArr.BlockedSKUItems.length > 0 || (responseArr.Available.length > 0 && responseArr.Available[0] != 0 && responseArr.Available[0] != '0')){
+              $("."+cardClass).each(function(){
+                var skuid = $(this).closest("div").find("input[name='id']").val();
+            	var prodid = $(this).closest("div").find("input[name='id']").data("productid");
+                var passmessage = "Sold Out";
+                  if(!(responseArr.NoTrack).includes(parseInt(skuid))){
+                      if(!(responseArr.Available).includes(parseInt(skuid))){
+                          var elem = $(this).closest("div").find(".atc-trigger");  	
+                          elem.attr("disabled",true);
+                          elem.find("span").text(passmessage);
+                		$("#Card-"+prodid+" form a").removeAttr("href");
+                          $("#Card-"+prodid).attr("title",passmessage);
+                          // Austin - 11/14/20 - adding in console logging for determining if blocked logic is being triggered
+                          console.log(`Blocking purchase, custom msg => ${ErrorMessage}`);
+                      }
+                  }
+              });
+            }
+          }else{
+			if(responseArr.BlockedSKUItems.length > 0 || (responseArr.Available.length > 0 && responseArr.Available[0] != 0 && responseArr.Available[0] != '0')){
+            $("."+cardClass).each(function(){
+            var skuid = $(this).closest("div").find("input[name='id']").val();
+            var prodid = $(this).closest("div").find("input[name='id']").data("productid");
+              var passmessage = "Sold Out";
+                
+            if(!(responseArr.NoTrack).includes(parseInt(skuid))){
+              if(!(responseArr.Available).includes(parseInt(skuid))){
+                	var elem = $(this).closest("div").find(".sk-price-and-btn");
+                  	if((responseArr.BlockedSKUItems).includes(parseInt(skuid))){
+                      if(responseArr.CustomMessage){
+                          elem.html('<div class="card__availability">'+responseArr.CustomMessage+'</div><button class="atc-trigger sk-atc product-card-addtocart sk-add-cart-btn product__add-to-cart-button animate"  style="display: table !important;margin: 0 auto;" disabled="true"><span class="primary-text" aria-hidden="false" data-cart-primary-submit-text="">Sold Out</span></button>');
+                           $("#Card-"+prodid).attr("title",responseArr.CustomMessage);
+                       
+                      }else{
+                          elem.html('<div class="card__availability">Sold Out</div><button class="atc-trigger sk-atc product-card-addtocart sk-add-cart-btn product__add-to-cart-button animate" disabled="true"><span class="primary-text" aria-hidden="false" data-cart-primary-submit-text="">Sold Out</span></button>');
+                           $("#Card-"+prodid).attr("title",passmessage);
+                       
+                      }
+                    }else{
+                    	elem.html('<div class="card__availability">Sold Out</div><button class="atc-trigger sk-atc product-card-addtocart sk-add-cart-btn product__add-to-cart-button animate" disabled="true"><span class="primary-text" aria-hidden="false" data-cart-primary-submit-text="">Sold Out</span></button>');
+                         $("#Card-"+prodid).attr("title",passmessage);
+                       
+                    }
+                 	//hide on sale tag for the same
+                  	var saletag =  $(this).closest("div").find(".sale-tag");
+                  	saletag.hide();
+                	$("#Card-"+prodid+" form a").removeAttr("href");
+                	
+              }
+          	}
+          });
+          }
+          }
+          
+        }
+        
+        $("#Quantity-product-template").on('change',function(e){
+        
+        });
+        $(".qty-btn").on('click',function(){
+          if($(this).hasClass("down-btn")){
+          	  checkForQty('minus');
+          }else{
+          	  checkForQty('plsqty');
+          
+          }
+          
+        
+        });
+      //var checkInterval;
+        if(productData){
+          for(i=1;i<=5;i++){
+          	setTimeout(function() {
+            	checkForQty();
+            }, 2000*i);
+          }
+        }        
+	 
+        
+          // handle quantity textbox value update event
+          $(".ProductForm__QuantitySelector .QuantitySelector__CurrentQuantity").keyup(function() {
+             checkForQty('', 'qtextbox');
+          });
+        
+        $(".product-form select").change(function() {
+             checkForQty('', 'qtextbox');
+          });
+			
+        	
+        $(".cart__qty-input").on("change",function(){
+          checkForQty('inputchange');
+        });
+          // handle options click event
+          $('.ProductForm__Variants input[type=radio]').change(function(){
+              checkForQty($(this).val());
+          }); 	
+      
+      
+      
+      $(window).on('load', function() {
+        if(productData){
+            // Austin - 11/14/20 - adding in console logging for determining if blocked logic is being triggered
+          	console.log('Bytes active, checking for quantity...');
+        	checkForQty();
+        }
+        // code here
+		});
+  });
+  	
+  
+  if(ErrorFlag==1){
+    
+  }
+    
+</script>

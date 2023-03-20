@@ -1,0 +1,306 @@
+{% comment %} ---------- BEGIN EXEC CLUB MEMBER PORTAL CSS ---------- {% endcomment %}
+<style>
+    .ec-container {
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 0 2rem;
+        margin: 3rem auto;
+    }
+
+    .ec-row {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        width: 100%;
+        padding: 1rem;
+        margin: 2rem 0;
+    }
+
+    .ec-col {
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: center;
+        align-items: center;
+        margin: 1rem .5rem;
+    }
+
+    .ec-hero {
+        width: 100%;
+        height: auto;
+    }
+
+    .ec-line {
+        width: 75%;
+        margin: 4rem auto;
+        border-top: 2px outset #f1f1f1;
+    }
+
+    .ec-btn, .ec-a-btn {
+      display: block !important;
+      border: 2px solid black;
+      background: transparent;
+      height: auto;
+      padding: 1.7rem 2rem !important;
+      font-family: apercu;
+      font-size: 1.5rem;
+      color: black;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: 0.4s !important;
+    }
+    
+    .ec-btn:hover, .ec-a-btn:hover {
+      background-color: black;
+      color: white;
+    }
+
+    .ec-mp-container {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .ec-mp-sidebar {
+        min-width: 300px;
+        padding: 0 1.5rem;
+        order: 1;
+        display: flex;
+        flex-flow: column wrap;
+    }
+
+    .ec-mp-sidebar-select {
+        display: none;
+        border: 2px solid  rgb(74, 74, 74);
+        border-radius: 25px;
+        background-color: rgb(245, 242, 242);
+        text-align: center;
+    }
+
+    .ec-mp-sidebar-item {
+        padding: .5rem;
+        margin: .5rem 0;
+        text-decoration: none;
+        font-weight: 900;
+        color: rgb(74, 74, 74);
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+    }
+
+    .ec-mp-sidebar-item:hover {
+        border: 2px solid  rgb(74, 74, 74);
+        border-radius: 25px;
+        background-color: rgb(245, 242, 242);
+    }
+
+    .ec-mp-sidebar-item > span {
+        font-size: 1.25rem;
+        font-weight: 900;
+    }
+
+    .ec-mp-sidebar-icon {
+        max-width: 32px;
+        max-height: 32px;
+        margin-right: 1rem;
+    }
+
+    .ec-mp-content {
+        order: 2;
+    }
+
+    /* Dropdown Button */
+    .ec-mp-dropbtn {
+        background-color: rgb(245, 242, 242);
+        color:black;
+        padding: .5rem 1.5rem;
+        font-size: 1rem;
+        border: 2px solid black;
+        border-radius: 15px;
+        cursor: pointer;
+    }
+
+    /* Dropdown button on hover & focus */
+    .ec-mp-dropbtn:hover, .dropbtn:focus {
+        background-color: rgb(245, 242, 242);
+    }
+
+    /* The container <div> - needed to position the dropdown content */
+    .ec-mp-dropdown {
+        position: relative;
+        display: none;
+    }
+
+    /* Dropdown Content (Hidden by Default) */
+    .ec-mp-dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: rgb(245, 242, 242);
+        min-width: 160px;
+        box-shadow: 0px .75rem 1.5rem 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+    /* Links inside the dropdown */
+    .ec-mp-dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: flex;
+        flex-flow: row wrap;
+    }
+
+    /* Change color of dropdown links on hover */
+    .ec-mp-dropdown-content a:hover {
+        background-color: #ddd
+    }
+
+    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+    .ec-mp-show { 
+        display: block;
+    }
+
+    /* Hide a mobile-only discount title */
+    .ec-mp-discount-title {
+        display: none;
+        font-weight: 900;
+        padding: .5rem 1.5rem;
+    }
+
+    @media only screen and (max-width: 649px) {
+        .ec-mp-discount-title {
+            display: block;
+        }
+
+        .ec-mp-container {
+            flex-flow: column wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ec-mp-sidebar {
+            flex-flow: row wrap;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 2.5rem;
+        }
+
+        .ec-mp-sidebar-list {
+            display: none;
+        }
+
+        .ec-mp-sidebar-title {
+            display: none;
+        }
+
+        .ec-mp-dropdown {
+            display: inline-block;
+        }
+    }
+</style>
+{% comment %} ---------- END EXEC CLUB MEMBER PORTAL CSS ---------- {% endcomment %}
+
+
+
+{% comment %} ---------- BEGIN EXEC CLUB MEMBER PORTAL ---------- {% endcomment %}
+<!-- Shopify page-width and flexbox wrapper for all content -->
+<div class="ec-container page-width">
+    <!-- Static Header -->
+    <div class="row">
+        <h1 class="text-center" style="color: rgb(125,131,255);">Executive Club</h1>
+        <h5 class="text-center">MEMBERSHIP PORTAL</h5>
+        <h5 class="ec-mp-discount-title">EXECUTIVE BRONZE DISCOUNT CODE: EXECBRONZE</h5>
+    </div>
+
+    <!-- Divider Line -->
+    <div class="ec-line" style="width: 100% !important"></div>
+
+    <!-- Content and Sidebar container-->
+    <div class="ec-mp-container">
+        <!-- Sidebar menu -->
+        <div class="ec-mp-sidebar">
+            <span class="ec-mp-sidebar-title" style="font-weight: 900;">Menu</span>
+            <div class="ec-mp-sidebar-list">
+                <a class="ec-mp-sidebar-item" href="{{pages['executive-club-member-portal-index'].url}}"><img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/user.png" class="ec-mp-sidebar-icon"><span>ACCOUNT</span></a>
+                <a class="ec-mp-sidebar-item" href="{{pages['executive-club-member-portal-resources'].url}}"><img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/book.png" class="ec-mp-sidebar-icon"><span>RESOURCES</span></a>
+                <a class="ec-mp-sidebar-item" href="{{pages['executive-club-member-portal-products'].url}}"><img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/tag.png" class="ec-mp-sidebar-icon"><span>PRODUCTS</span></a>
+              <a class="ec-mp-sidebar-item" href="{{pages['executive-club-member-portal-product-demos'].url}}"><img src="https://cdn.shopify.com/s/files/1/0552/1029/files/exec-video-icon.png" class="ec-mp-sidebar-icon"><span>PRODUCT DEMOS</span></a>
+                <a class="ec-mp-sidebar-item" href="{{pages['executive-club-member-portal-marketing'].url}}"><img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/chart.png" class="ec-mp-sidebar-icon"><span>MARKETING</span></a>
+                <a id="ec-mp-support" class="ec-mp-sidebar-item" href="#" onclick="Smooch.open();"><img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/support.png" class="ec-mp-sidebar-icon"><span>SUPPORT</span></a>
+            </div>
+
+            <div class="ec-mp-dropdown">
+                <button onclick="toggleDropdown()" class="ec-mp-dropbtn">Menu</button>
+                <div id="menu-dropdown" class="ec-mp-dropdown-content">
+                    <a class="ec-mp-sidebar-item" href="{{pages['executive-club-member-portal-index'].url}}"><img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/user.png" class="ec-mp-sidebar-icon"><span>ACCOUNT</span></a>
+                    <a class="ec-mp-sidebar-item" href="{{pages['executive-club-member-portal-resources'].url}}"><img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/book.png" class="ec-mp-sidebar-icon"><span>RESOURCES</span></a>
+                    <a class="ec-mp-sidebar-item" href="{{pages['executive-club-member-portal-products'].url}}"><img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/tag.png" class="ec-mp-sidebar-icon"><span>PRODUCTS</span></a>
+                  <a class="ec-mp-sidebar-item" href="{{pages['executive-club-member-portal-product-demos'].url}}"><img src="https://cdn.shopify.com/s/files/1/0552/1029/files/exec-video-icon.png" class="ec-mp-sidebar-icon"><span>PRODUCT DEMOS</span></a>
+                    <a class="ec-mp-sidebar-item" href="{{pages['executive-club-member-portal-marketing'].url}}"><img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/chart.png" class="ec-mp-sidebar-icon"><span>MARKETING</span></a>
+                    <a id="ec-mp-support" class="ec-mp-sidebar-item" href="#" onclick="Smooch.open();"><img src="https://cdn.shopify.com/s/files/1/0340/6695/6423/files/support.png" class="ec-mp-sidebar-icon"><span>SUPPORT</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page content -->
+        <div class="ec-mp-content">
+            <!-- Logic to show collection-based content for Product page (by handle) or to show content created in Shopify Admin for Page -->
+            {% if page.handle == 'executive-club-member-portal-products' %}
+                <div class="sk-collection-row" data-grid-style="{{ section.settings.grid_style }}">
+                    {% for product in collections['executive-club-exclusive'].products %}
+                        {% include 'product-card', product: product, grid_style: section.settings.grid_style %}
+                    {% endfor %}
+
+                    {% for product in collections['executive-club-discount-skus'].products %}
+                        {% include 'product-card', product: product, grid_style: section.settings.grid_style %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ page.content }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% comment %} ---------- END EXEC CLUB MEMBER PORTAL ---------- {% endcomment %}
+
+
+
+{% comment %} ---------- BEGIN EXEC CLUB MEMBER JS ---------- {% endcomment %}
+<script>
+    /* When the user clicks on the button,
+    toggle between hiding and showing the dropdown content */
+    function toggleDropdown() {
+        document.querySelector('#menu-dropdown').classList.toggle('ec-mp-show');
+    }
+
+    // Close the dropdown menu if the user clicks outside of it
+    window.onclick = function(event) {
+        if (!event.target.matches('.ec-mp-dropbtn')) {
+            let dropdowns = document.getElementsByClassName("ec-mp-dropdown-content");
+            let i;
+            for (i = 0; i < dropdowns.length; i++) {
+                let openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('ec-mp-show')) {
+                    openDropdown.classList.remove('ec-mp-show');
+                }
+            }
+        }
+    }
+</script>
+{% comment %} ---------- END EXEC CLUB MEMBER JS ---------- {% endcomment %}
+
+
+
+{% comment %} ---------- BEGIN EXEC CLUB MEMBER MENU JS ---------- {% endcomment %}
+{% if page.handle == 'executive-club-member-portal-marketing' %}
+    {% comment %} Load jsPDF lib {% endcomment %}
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+
+    <script>
+
+    </script>
+{% endif %}
+{% comment %} ---------- END EXEC CLUB MEMBER MENU JS ---------- {% endcomment %}

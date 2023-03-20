@@ -1,0 +1,116 @@
+{% comment %}
+  The contents of the product.liquid template can be found in /sections/product-template/
+{% endcomment %}
+
+{% section 'product-template' %}
+
+<div data-rebuy-id="37136" data-rebuy-shopify-product-ids="{{ product.id }}"></div>
+<!-- {% section 'product-recommendations' %} -->
+
+
+
+
+<div class="sk-main-widget" id="stamped-main-widget"   
+  data-widget-style="standard" 
+  data-product-id="{{ product.id }}"   
+  data-name="{{ product.title | escape }}"   
+  data-url="{{ shop.url }}{{ product.url }}"   
+  data-image-url="{{ product.featured_image | product_img_url: "large" |replace: '?', '%3F' | replace: '&','%26'}}" 
+  data-description="{{ product.description | escape }}"   
+  data-product-sku="{{product.handle}}">   
+  {{ product.metafields.stamped.reviews }}   
+</div>
+
+
+<script>
+  window.theme = window.theme || {};
+  window.theme.strings = window.theme.strings || {};
+
+  // Override default values of theme.strings for each template.
+  // Values are used by JavaScript only; Liquid must be updated separately
+  window.theme.strings.addToCart = {{ 'products.product.add_to_cart' | t | json }};
+  window.theme.strings.soldOut = {{ 'products.product.sold_out' | t | json }};
+  window.theme.strings.unavailable = {{ 'products.product.unavailable' | t | json }};
+</script>
+
+
+<script>
+ // document.sezzleConfig =
+ // {
+   // targetXPath: '.product__current-price/.money',
+  //  forcedShow: false,
+  //  alignment: 'left',
+  //  merchantID: '33e94411-4bcf-45d0-948a-78ceb150a284',
+  //  theme: 'light',
+  //  widthType: 'thin',
+  //  widgetType: 'cart',
+  //  minPrice: 0,
+  //  maxPrice: 100000,
+  }
+</script>
+
+
+<script type="text/javascript">
+  
+  //Klaviyo Web Tracking Script
+  
+  var _learnq = _learnq || [];
+
+  var item = {
+    Name: {{ product.title|json }},
+    ProductID: {{ product.id|json }},
+    Categories: {{ product.collections|map:'title'|json }},
+    ImageURL: "https:{{ product.featured_image.src|img_url:'grande' }}",
+    URL: "{{ shop.secure_url }}{{ product.url }}",
+    Brand: {{ product.vendor|json }},
+    Price: {{ product.price|money|json }},
+    CompareAtPrice: {{ product.compare_at_price_max|money|json }}
+  };
+
+  _learnq.push(['track', 'Viewed Product', item]);
+  _learnq.push(['trackViewedItem', {
+    Title: item.Name,
+    ItemId: item.ProductID,
+    Categories: item.Categories,
+    ImageUrl: item.ImageURL,
+    Url: item.URL,
+    Metadata: {
+      Brand: item.Brand,
+      Price: item.Price,
+      CompareAtPrice: item.CompareAtPrice
+    }
+  }]);
+</script>
+
+<script type="text/javascript">
+  
+    //Klaviyo add to cart Tracking Script
+
+	var _learnq = _learnq || [];
+	document.querySelector('.sk-atc').addEventListener('click',function (){
+ 		_learnq.push(['track', 'Added to Cart', item]);
+	});
+</script>
+
+<!-- Sezzle Script 
+<script src="https://widget.sezzle.com/v1/javascript/price-widget?uuid=33e94411-4bcf-45d0-948a-78ceb150a284"></script>
+-->
+
+ <!-- Snap Pixel Code added by Vishal on May 24th 2021 -->
+        <script type='text/javascript'>
+        (function(e,t,n){if(e.snaptr)return;var a=e.snaptr=function()
+        {a.handleRequest?a.handleRequest.apply(a,arguments):a.queue.push(arguments)};
+        a.queue=[];var s='script';r=t.createElement(s);r.async=!0;
+        r.src=n;var u=t.getElementsByTagName(s)[0];
+        u.parentNode.insertBefore(r,u);})(window,document,
+        'https://sc-static.net/scevent.min.js');
+
+        snaptr('init', '2de1f897-f881-4655-a83a-e221ba744076', {
+        'user_email': 'steve@reshoevn8r.com'
+        });
+
+        snaptr('track', 'VIEW_CONTENT');
+
+        </script>
+        <!-- End Snap Pixel Code -->
+<script src='https://widget.sezzle.com/v1/javascript/price-widget?uuid=33e94411-4bcf-45d0-948a-78ceb150a284'></script>

@@ -1,0 +1,423 @@
+<div class="sk-about">
+ 
+ 	 <div class="sk-about-hero" style="display: none; background-position:65% 50%; background-image: url('{{section.settings.about-hero | img_url: 'master'}}')">
+      
+  	</div> 
+
+	<div class="sk-about-inner" style="text-transform: uppercase; text-align: center;"> 
+		<h1>{{page.title}}</h1> 
+	</div>
+
+   <div class="sk-about-inner"> 
+    <div class='space-between'>
+      <div class="about-text-col about-col">
+        <img src="{{section.settings.first-row-img | img_url: 'master'}}" />
+      </div>
+      
+      <div class="about-img-col about-col" id="row-1-img">
+        <h4 class="about-text-col-h">{{section.settings.first-row-h}}</h4>
+        <p class="about-text-col-p">{{section.settings.first-row-p}}</p>
+      </div>
+    </div>
+    
+     <div class='space-between about-row'>
+       <div class="about-img-col  about-col">        <h4 class="about-text-col-h">{{section.settings.second-row-h}}</h4>
+        <p>{{section.settings.second-row-p}}</p>
+      </div>
+       
+      <div class="about-text-col  about-col">
+        <img src="{{section.settings.third-row-img | img_url: 'master'}}" />
+      </div> 
+      </div> 
+       
+   {%comment%}
+     <div class="about-video about-row" scrolling="yes">
+      <iframe id="video" class="about-iframe rte" src="{{section.settings.about-video}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+     </div>
+     
+     <div>
+       <button id="play-button">play</button>
+       <button id="pause-button">pause</button>
+       <button id="stop-button">stop</button>
+     </div>
+   {%endcomment%}
+     
+       <div class="about-video-wrap" data-section-id="{{ section.id }}">
+       <div class="about-video" scrolling="yes">
+          <iframe id="video" class="about-iframe rte" src="{{section.settings.about-video}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+          </iframe>
+       </div>  
+     </div>
+     
+
+{%comment%}
+<div class="about-video-wrap" data-section-id="{{ section.id }}" data-section-type="slideshow-section">
+  <div id="Slideshow-{{ section.id }}"
+       class="slideshow about-slide"
+       role="region"
+       aria-describedby="slideshow-info"
+       tabindex="-1"
+       aria-label="slideshow">
+    {%- if section.blocks.size > 0 -%}
+      <ul>
+
+        {%- for block in section.blocks -%}
+          <li class="slideshow__slide slideshow__slide--{{ block.id }}{% if forloop.first %} slideshow__slide--active{% endif %}{% if section.settings.show_overlay %} slideshow__overlay{% endif %}"
+              id="Slide{{ forloop.index0 }}"
+              {% unless forloop.first %}aria-hidden="true"{% endunless %}
+              {{ block.shopify_attributes }}>
+            {%- if block.settings.image == blank -%}
+              <div class="slideshow__image slideshow__image--{{ block.id }}">
+                <div class="placeholder-background">
+                  {% capture current %}{% cycle 1, 2 %}{% endcapture %}
+                  {{ 'lifestyle-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              </div>
+            {%- else -%}
+              {%- assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+              <style>
+                .slideshow__image--{{ block.id }} {
+                  object-position: {{ block.settings.alignment }};
+                  font-family: "object-fit: cover; object-position: {{ block.settings.alignment }};";
+                }
+              </style>
+
+              <img class="slideshow__image slideshow__image--{{ block.id }} lazyload"
+                  src="{{ block.settings.image | img_url: '300x' }}"
+                  data-src="{{ img_url }}"
+                 
+                  data-aspectratio="{{ block.settings.image.aspect_ratio }}"
+                  data-sizes="auto"
+                  data-parent-fit="cover"
+                  alt="{{ block.settings.image.alt | escape }}">
+            {%- endif -%}
+
+            {%- if block.type == 'video' and block.settings.video_url != blank -%}
+              <div class="slideshow__video slideshow__video--{{ block.id }}"
+                data-video-type="{{ block.settings.video_url.type }}"
+                data-video-id="{{ block.settings.video_url.id }}"
+                data-block-id="{{ block.id }}"></div>
+            {%- endif -%}
+         
+            <div class="slideshow__text-container page-width">         
+              {%- if block.type == 'video' -%}
+                  <button class="slideshow__play-button btn btn--clear"
+                          disabled
+                          aria-live="polite"
+                          aria-label="{{ 'sections.slider.pause' | t }}"
+                          aria-pressed="false"
+                          data-label-pause="{{ 'sections.slider.pause' | t }}"
+                          data-label-play="{{ 'sections.slider.play' | t }}"
+                          data-pause-button>
+                    <span class="visually-hidden" data-play-label>{{ 'video.play' | t }}</span>
+                    <span class="slideshow__play-button-icon"></span>
+                    <span class="slideshow__play-button-circle"></span>
+                  </button>
+                {%- endif -%}
+              
+                <div class="slideshow__text-content" data-animate>
+                  {%- if block.settings.title != blank -%}
+                    <h2 class="slideshow__heading h1">
+                      {{ block.settings.title | escape }}
+                    </h2>
+                  {%- endif -%}
+                  {%- if show_center_cta and block.settings.cta_link != blank -%}
+                    <a href="{{ block.settings.cta_link }}" class="sk-home-slide-btn sk-btn-secondary {% if section.blocks.size == 1 and section.settings.slider_height == 'adapt' %} small--hide{% endif %}">
+                      {{ block.settings.cta | escape }}
+                    </a>
+                {%- endif -%}
+               </div>   
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- else -%}
+    {%- endif -%}
+  </div>
+</div>
+{%endcomment%}
+    
+     
+      <div class="sk-about-text about-row">
+        <h4 id="third-row-h" class="about-text-col-h">{{section.settings.third-row-h}}</h4>
+        <p class="about-text-col-p">{{section.settings.third-row-p}}</p>
+      </div>
+        
+     
+     
+     
+   
+    </div>
+     
+    </div>
+    
+ 
+</div>  
+
+
+
+
+{%comment%}
+ <div class="about-img-col  about-col" style="background-image: url('{{section.settings.third-row-img | img_url: 'master'}}')">
+       
+</div>
+
+
+,
+	  "blocks": [
+    {
+      "type": "image",
+      "name": {
+        "da": "Billeddias",
+        "de": "Foto-Slide",
+        "en": "Image slide",
+        "es": "Diapositiva de imagen",
+        "fi": "Kuvadia",
+        "fr": "Diapositive (image)",
+        "hi": "इमेज स्लाइड",
+        "it": "Slide immagine",
+        "ja": "画像スライド",
+        "ko": "이미지 슬라이드",
+        "ms": "Slaid imej",
+        "nb": "Lysbilde",
+        "nl": "Afbeelding dia",
+        "pt-BR": "Slide de imagem",
+        "pt-PT": "Diapositivo de imagem",
+        "sv": "Bild i bildspel",
+        "th": "สไลด์รูปภาพ",
+        "zh-CN": "图片幻灯片",
+        "zh-TW": "圖片投影片"
+      },
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": {
+            "da": "Billede",
+            "de": "Foto",
+            "en": "Image",
+            "es": "Imagen",
+            "fi": "Kuva",
+            "fr": "Image",
+            "hi": "इमेज",
+            "it": "Immagine",
+            "ja": "画像",
+            "ko": "이미지",
+            "ms": "Imej",
+            "nb": "Bilde",
+            "nl": "Afbeelding",
+            "pt-BR": "Imagem",
+            "pt-PT": "Imagem",
+            "sv": "Bild",
+            "th": "รูปภาพ",
+            "zh-CN": "图片",
+            "zh-TW": "圖片"
+          }
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": {
+        "da": "Videodias",
+        "de": "Video-Slide",
+        "en": "Video slide",
+        "es": "Diapositiva de video",
+        "fi": "Videon liukusäädin",
+        "fr": "Diapositive (vidéo)",
+        "hi": "वीडियो स्लाइड",
+        "it": "Slide video",
+        "ja": "ビデオスライド",
+        "ko": "동영상 슬라이드",
+        "ms": "Slaid video",
+        "nb": "Lysbilde med video",
+        "nl": "Videodia",
+        "pt-BR": "Slide de vídeo",
+        "pt-PT": "Slide de vídeo",
+        "sv": "Videoslide",
+        "th": "สไลด์วิดีโอ",
+        "zh-CN": "视频幻灯片",
+        "zh-TW": "影片投影片"
+      },
+      "settings": [
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "info": {
+            "da": "De bedste resultater opnås, hvis videoens højde-bredde-forhold er 16:9",
+            "de": "Beste Ergebnisse bei einem Seitenverhältnis des Videos von 16:9",
+            "en": "Best results if the video's aspect ratio is 16:9",
+            "es": "Mejor resultado si la relación de aspecto del video es 16: 9",
+            "fi": "Parhaat tulokset saadaan, jos videon kuvasuhde on 16:9",
+            "fr": "Vous obtiendrez de meilleurs résultats si le rapport d'aspect de la vidéo est de 16: 9",
+            "hi": "सबसे अच्छा परिणाम अगर वीडियो का पहलू अनुपात 16: 9 है",
+            "it": "Ottieni i migliori risultati se il formato del video è 16:9",
+            "ja": "ビデオのアスペクト比は16：9にするのが最適です。",
+            "ko": "동영상의 종횡비가 16 : 9 인 경우 가장 좋은 결과를 얻습니다.",
+            "ms": "Hasil terbaik jika nisbah aspek video ialah 16: 9",
+            "nb": "Best resultat hvis videoens høyde-/breddeforhold er 16:9",
+            "nl": "U krijgt de beste resultaten met een hoogte-breedteverhouding van 16:9",
+            "pt-BR": "Resultados melhores quando a proporção de tela do vídeo for 16: 9",
+            "pt-PT": "Melhores resultados com uma proporção de vídeo de 16:9",
+            "sv": "Bäst resultat om videons bildförhållande är 16:9",
+            "th": "แสดงผลดีที่สุดหากอัตราส่วนวิดีโอเป็น 16:9",
+            "zh-CN": "视频的纵横比为 16:9 时效果最佳",
+            "zh-TW": "影片長寬比控制為 16:9 效果最佳"
+          },
+          "label": {
+            "da": "Videolink",
+            "de": "Video-Link",
+            "en": "Video link",
+            "es": "Enlace de video",
+            "fi": "Videolinkki",
+            "fr": "Lien de la vidéo",
+            "hi": "वीडियो लिंक",
+            "it": "Link video",
+            "ja": "ビデオリンク",
+            "ko": "동영상 링크",
+            "ms": "Pautan video",
+            "nb": "Videokobling",
+            "nl": "Videolink",
+            "pt-BR": "Link do vídeo",
+            "pt-PT": "Ligação do vídeo",
+            "sv": "Videolänk",
+            "th": "ลิงก์วิดีโอ",
+            "zh-CN": "视频链接",
+            "zh-TW": "影片連結"
+          },
+          "accept": [
+            "youtube",
+            "vimeo"
+          ],
+          "default": {
+            "da": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "de": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "en": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "es": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "fi": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "fr": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "hi": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "it": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "ja": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "ko": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "ms": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "nb": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "nl": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "pt-BR": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "pt-PT": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "sv": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "th": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "zh-CN": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "zh-TW": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+          }
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": {
+            "da": "Coverbillede",
+            "de": "Titelbild",
+            "en": "Cover image",
+            "es": "Imagen de portada",
+            "fi": "Kansikuva",
+            "fr": "Image de couverture",
+            "hi": "कवर इमेज",
+            "it": "Immagine di copertina",
+            "ja": "表紙画像",
+            "ko": "커버 이미지",
+            "ms": "Kulit imej",
+            "nb": "Forsidebilde",
+            "nl": "Coverafbeelding",
+            "pt-BR": "Imagem de capa",
+            "pt-PT": "Imagem de capa",
+            "sv": "Omslagsbild",
+            "th": "รูปภาพหน้าปก",
+            "zh-CN": "封面图片",
+            "zh-TW": "封面圖片"
+          },
+          "info": {
+            "da": "Vises altid på mobilenheder",
+            "de": "Wird immer auf Mobilgeräten angezeigt",
+            "en": "Always shown on mobile devices",
+            "es": "Mostrar siempre dispositivos móviles",
+            "fi": "Näytetään aina mobiililaitteissa",
+            "fr": "S'affiche toujours sur les appareils mobiles",
+            "hi": "हमेशा मोबाइल उपकरणों पर दिखाया जाता है",
+            "it": "Sempre visualizzata sui dispositivi mobili",
+            "ja": "常にモバイルデバイスに表示",
+            "ko": "모바일 장치에 항상 표시됨",
+            "ms": "Sentiasa ditunjukkan pada peranti mudah alih",
+            "nb": "Vises alltid på mobilenheter",
+            "nl": "Altijd weergeven op mobiele apparaten",
+            "pt-BR": "Sempre mostrado em dispositivos móveis",
+            "pt-PT": "Sempre mostrado em dispositivos móveis",
+            "sv": "Visas alltid på mobila enheter",
+            "th": "แสดงบนอุปกรณ์มือถือเสมอ",
+            "zh-CN": "始终在移动设备上显示",
+            "zh-TW": "一律在行動裝置上顯示"
+          }
+        }
+      ]
+    }
+  ]
+{%endcomment%}
+
+
+{% schema %}
+  {
+    "name": "About",
+    "settings": [
+		{
+			"type": "image_picker",
+			"id": "about-hero",
+			"label": "About Hero"
+		},
+		{
+			"type": "text",
+			"id": "first-row-h",
+			"label": "First Row Header"
+		},
+		{
+			"type": "textarea",
+			"id": "first-row-p",
+			"label": "First Row Paragraph"
+		},
+		{
+			"type": "image_picker",
+			"id": "first-row-img",
+			"label": "First Row Image"
+		},
+		{
+			"type": "text",
+			"id": "second-row-h",
+			"label": "Second Row Header"
+		},
+		{
+			"type": "textarea",
+			"id": "second-row-p",
+			"label": "Second Row Paragraph"
+		},
+		{
+			"type": "text",
+			"id": "third-row-h",
+			"label": "Third Row Header"
+		},
+		{
+			"type": "textarea",
+			"id": "third-row-p",
+			"label": "Third Row Paragraph"
+		},
+		{
+			"type": "image_picker",
+			"id": "third-row-img",
+			"label": "Third Row Image"
+		},
+		{
+			"type": "text",
+			"id": "about-video",
+			"label": "About Video"
+		}
+	]
+  }
+{% endschema %}

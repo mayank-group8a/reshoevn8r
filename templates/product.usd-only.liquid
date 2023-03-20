@@ -1,0 +1,51 @@
+{% comment %}
+  The contents of the product.liquid template can be found in /sections/product-template/
+{% endcomment %}
+
+{% section 'product-usd-only-template' %}
+{% section 'product-recommendations' %}
+
+
+
+
+<div class="sk-main-widget" id="stamped-main-widget"   
+  data-widget-style="standard" 
+  data-product-id="{{ product.id }}"   
+  data-name="{{ product.title | escape }}"   
+  data-url="{{ shop.url }}{{ product.url }}"   
+  data-image-url="{{ product.featured_image | product_img_url: "large" |replace: '?', '%3F' | replace: '&','%26'}}" 
+  data-description="{{ product.description | escape }}"   
+  data-product-sku="{{product.handle}}">   
+  {{ product.metafields.stamped.reviews }}   
+</div>
+
+
+<script>
+  window.theme = window.theme || {};
+  window.theme.strings = window.theme.strings || {};
+
+  // Override default values of theme.strings for each template.
+  // Values are used by JavaScript only; Liquid must be updated separately
+  window.theme.strings.addToCart = {{ 'products.product.add_to_cart' | t | json }};
+  window.theme.strings.soldOut = {{ 'products.product.sold_out' | t | json }};
+  window.theme.strings.unavailable = {{ 'products.product.unavailable' | t | json }};
+</script>
+
+
+<script>
+//  document.sezzleConfig =
+//  {
+ //   targetXPath: '.product__current-price/.money',
+  //  forcedShow: false,
+ //   alignment: 'left',
+ //   merchantID: '33e94411-4bcf-45d0-948a-78ceb150a284',
+ //   theme: 'light',
+ //   widthType: 'thin',
+ //   widgetType: 'cart',
+ //   minPrice: 0,
+ //   maxPrice: 100000,
+  }
+  
+//  src="https://widget.sezzle.com/v1/javascript/price-widget/initial?uuid=33e94411-4bcf-45d0-948a-78ceb150a284">
+
+</script>

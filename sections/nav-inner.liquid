@@ -1,0 +1,211 @@
+<div class="navigation__container">
+  
+  <ul class="primary-nav-links navigation__links">
+    <li class="primary-link navigation__entrance-animation">
+      <a href="/collections/shoe-care-products">Shop</a>
+    </li>
+    <!--
+	{% for link in linklists[section.settings.primary_inner_nav].links%} {%
+    assign child_list_handle = link.title | handleize %} {% if link.links !=
+    blank %}
+    <li
+      class="primary-link navigation__has-sublinks navigation__has-sublinks--collapsed navigation__entrance-animation">
+      <button class="navigation__expand-sublinks" aria-expanded="{% if link.active %}true{% else %}false{% endif %}">
+        <span aria-hidden="true">{{ link.title }}</span>
+        <span class="visually-hidden">{{
+          "general.navigation.toggle_sublinks" | t: link_title:link.title
+        }}</span>
+        {% include 'icon-arrow-down' %}
+      </button>
+      <div class="navigation__sublinks-container">
+        <ul class="navigation__sublinks">
+          {% for childlink in link.links %}
+          <li
+            class="navigation__sublink{% if childlink.links != blank %} navigation__has-sublinks navigation__has-sublinks--collapsed{% endif %}">
+            {% if childlink.links != blank %}
+            <button class="navigation__expand-sublinks navigation__expand-sublinks--third-level"
+              aria-expanded="{% if link.active %}true{% else %}false{% endif %}">
+              <span aria-hidden="true">{{ childlink.title }}</span>
+              <span class="visually-hidden">{{
+                "general.navigation.toggle_sublinks"
+                  | t: link_title:childlink.title
+              }}</span>
+              {% include 'icon-arrow-down' %}
+            </button>
+            <div class="navigation__sublinks-container">
+              <ul class="navigation__sublinks navigation__sublinks--third-level">
+                {% for grandchildlink in childlink.links %}
+                <li class="navigation__sublink--third-level">
+                  <a href="{{ grandchildlink.url }}" {%
+                    if
+                    grandchildlink.active
+                    %} aria-current="page" {%
+                    endif
+                    %}>{{ grandchildlink.title | escape }}</a>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% else %}
+            <a href="{{ childlink.url }}" {%
+              if
+              childlink.active
+              %} aria-current="page" {%
+              endif
+              %}>{{ childlink.title | escape }}</a>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </li>
+    {% else %}
+    <li class="primary-link navigation__entrance-animation{% if link.active %} navigation__link--active{% endif %}">
+      <a href="{{ link.url }}" {%
+        if
+        link.active
+        %} aria-current="page" {%
+        endif
+        %}>{{ link.title }}</a>
+    </li>
+    {% endif %} 
+    {% endfor %}
+    
+  
+
+   
+    -->
+  </ul>
+
+  <ul class="navigation__links">
+     {%comment%}
+   
+      {%endcomment%}
+     {% if shop.customer_accounts_enabled %} {% if customer %}
+    <li class="secondary-link">
+      {% if customer.first_name != blank %} {% capture first_name %}{{
+        customer.first_name
+      }}{% endcapture %}
+      <a href="{{ routes.account_url }}">{{
+        "layout.customer.logged_in_as_html" | t: first_name:first_name
+      }}</a>
+      {% else %}
+      <a href="{{ routes.account_url }}">{{ "layout.customer.account" | t }}</a>
+      {% endif %}
+    </li>
+    <li class="secondary-link">
+      <a href="{{ routes.account_logout_url }}">{{
+        "layout.customer.log_out" | t
+      }}</a>
+    </li>
+    {% else %}
+    <li class="secondary-link">
+      <a href="{{ routes.account_login_url }}">{{
+        "layout.customer.log_in" | t
+      }}</a>
+    </li>
+    <li class="secondary-link">
+      <a href="{{ routes.account_register_url }}">{{
+        "layout.customer.create_account" | t
+      }}</a>
+    </li>
+    {% endif %} 
+    {% endif %}
+    
+    
+    {% for link in linklists.secondary-sidebar-nav.links %}
+    <li class="secondary-link {% if link.active %} navigation__link--active{% endif %}">
+      <a href="{{ link.url }}">{{ link.title }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+
+  {%include 'social-links'%}
+  
+  <!-- {% include 'search-bar', animate: true, disableTab: true %} -->
+</div>
+
+{% schema %}
+{ "name":"Navigation Inner",
+"settings":[
+{ "type":"link_list",
+"id":"primary_inner_nav",
+"label":"Inner Primary Nav",
+"default":"main-menu"
+},
+{
+"type":"link_list",
+"id":"secondary_inner_nav",
+"label":"Inner Secondary Nav"
+}
+]
+}
+{%endschema%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{%comment%}
+
+{% if section.settings.show_social_icons %}
+  <div class="nav-social-row sk-flex">
+    <div class="nav-social-div">
+      <a href="{{ section.settings.twitter_url }}">
+        <img src="{{ 'twitter.png' | asset_url }}" />
+      </a>
+    </div>
+    <div class="nav-social-div">
+      <a href="{{ section.settings.ig_url }}">
+        <img src="{{ 'ig.png' | asset_url }}" />
+      </a>
+    </div>
+    <div class="nav-social-div">
+      <a href="{{ section.settings.snap_url }}">
+        <img src="{{ 'snap.png' | asset_url }}" />
+      </a>
+    </div>
+    <div class="nav-social-div">
+      <a href="{{ section.settings.youtube_url }}">
+        <img src="{{ 'youtube.png' | asset_url }}" />
+      </a>
+    </div>
+  </div>
+  {% endif %}
+
+,
+{
+"type": "checkbox",
+"id": "show_social_icons",
+"label": "Show social icons"
+},
+{
+"type": "url",
+"id": "twitter_url",
+"label": "Twitter Url"
+},
+{
+"type": "url",
+"id": "ig_url",
+"label": "IG Url"
+},
+{
+"type": "url",
+"id": "snap_url",
+"label": "Snap Url"
+},
+{
+"type": "url",
+"id": "youtube_url",
+"label": "Youtube Url"
+}
+{%endcomment%}

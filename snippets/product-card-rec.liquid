@@ -1,0 +1,90 @@
+<div class="sk-pdp-rec" id="Card-{{ product.id }}" data-animate>
+  <form class="sk-add-cart-form" method="post" action="/cart/add" data-productid="{{ product.id }}">
+
+
+  <input type="hidden" name="id" data-productid="{{ product.id }}" value="{{ product.variants.first.id }}" />
+ 
+    <div class="sk-pdp-rec-a-wrap">
+    <a class="sk-featured-product-a" href="{{product.url}}">
+    {% comment %}
+    This makes the image hover. We replaced this code with the one below to select the 2nd imgage
+    {% if product.featured_image %}
+      {% include 'card-image', type: product.featured_image, grid_style: grid_style %}
+    {% endif %}
+    {% endcomment %}
+
+    <img class="card-img" src="{{ product.featured_image | product_img_url: 'large' }}" alt="{{product.title}}">
+
+      <img class="hovered-img" src="{{ product.images[1] | product_img_url: 'large' }}" alt="{{product.title}}">
+
+
+    </a>
+    </div>
+
+    <div class="sk-pdp-rec-info">
+      <div class="sk-pdp-rec-info-inner">
+   
+      <a href="{{ product.url | within: collection }}" class="sk-card-title">{{ product.title }}</a>
+
+      {% if product.available %}
+        <div class="sk-card-price">
+          {%- assign variant = product.selected_or_first_available_variant %}
+          {% if product.compare_at_price > product.price %}
+            {% comment %}
+              Product is on sale
+            {% endcomment %}
+            {% if product.price_varies %}
+              {% assign sale_price = product.price | money_without_trailing_zeros %}
+              <span class="visually-hidden"> {{ 'products.product.price' | t }} </span>
+              {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+            {% else %}
+              <span class="visually-hidden">{{ 'products.product.sale_price' | t }}</span>
+              <span class="card__price--sale">{{ product.price | money_without_trailing_zeros }}</span>
+
+              <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+              <span class="card__price--regular-strike">
+                <span class="card__price--regular">{{ product.compare_at_price | money_without_trailing_zeros }}</span>
+              </span>
+              {%- if variant.available and variant.unit_price_measurement -%}
+                {% include 'product-unit-price', variant: variant %}
+              {% endif %}
+            {% endif %}
+
+          {% else %}
+            {% comment %}
+              Not on sale, but could still have varying prices
+            {% endcomment %}
+            {% if product.price_varies %}
+              {% assign price = product.price | money_without_trailing_zeros %}
+              {{ 'products.product.from_text_html' | t: price: price }}
+            {% else %}
+          	  {% comment %} Austin - 11/16/20 - added VAT pricing by GeoIP {% endcomment %}
+          	  {{ product.price | money_without_trailing_zeros }}
+          
+              {%- if variant.available and variant.unit_price_measurement -%}
+                {% include 'product-unit-price', variant: variant %}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="card__availability">
+          {{ 'products.product.sold_out' | t }}
+        </div>
+      {% endif %}
+      
+   	</div>
+    </div>
+    
+    {%comment%}
+    {% if product.compare_at_price > product.price %}
+      {% assign sale_text_length = 'products.product.on_sale' | t | size %}
+      <span class="card__badge{% if sale_text_length > 6 %} card__badge--large{% endif %}">
+        {{ 'products.product.on_sale' | t }}
+      </span>
+    {% endif %}
+    {%endcomment%}
+    
+  
+  </form>
+</div>

@@ -1,0 +1,12 @@
+{%- layout none -%}
+
+{%- paginate search.results by 10 -%}
+{%- if search.performed -%}
+{"products": [
+    {%- for item in search.results -%}{% comment %}EasylockdownFilterBegin{% endcomment %}{% capture easylockdownFilter %}{% render 'easylockdown_filter_search' with item, easylockdownRender: true, easylockdownItemSelectorOff: easylockdownItemSelectorOff %}{% endcapture %}{% assign easylockdownFilter = easylockdownFilter | strip %}{% if easylockdownFilter == 'continue' %}{% continue %}{% else %}{{ easylockdownFilter }}{% endif %}{% comment %}EasylockdownFilterEnd{% endcomment %}
+        {"id":{{ item.id | json }},"title":{{ item.title | json }},"handle":{{ item.handle | json }},"price":{{ item.price | json }},"images":[{% for image in item.images %}{"src":{{ image.src | json }},"id":{{ image.id | json }},"alt":{{ image.alt | json }}}{%- unless forloop.last %},{% endunless -%}{%- endfor -%}]}
+        {%- unless forloop.last %},{% endunless -%}
+    {%- endfor -%}
+]}
+{%- endif -%}
+{%- endpaginate -%}

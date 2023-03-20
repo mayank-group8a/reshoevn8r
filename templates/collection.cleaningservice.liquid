@@ -1,0 +1,64 @@
+<script>
+    var childP;
+    $(document).on('submit', '.product-form', function(e) {
+        childP = $(this).find('p.product__notification');
+        $.ajax({
+            url: '/cart/add.js',
+            type: $(this).attr('method'),
+            data: $(this).serialize(),
+            success: function(html) {
+                childP.text("Item added to cart!");
+                childP.addClass('product__notification--success');
+                refreshCart();
+            }
+        });
+        refreshCart();
+        e.preventDefault();
+        $(this).find('.btn').removeClass('btn--primary');
+        $(this).find('.btn').addClass('btn--secondary btn--to-secondary-transitioned');
+        $(this).find('.btn').addClass('ajax-cart__toggle');
+        $(this).find('.btn .primary-text').hide();
+        $(this).find('.btn .secondary-text').show();
+        $(".site-header__cart-bubble").removeClass('site-header__cart-bubble--hidden');
+        $(".site-header__cart-bubble").addClass('site-header__cart-bubble--visible');
+        $('.cart-drawer').removeClass('cart-drawer--empty');
+    });
+
+    function refreshCart() {
+      $(document).trigger('refresh-cart');
+    }
+</script>
+
+
+
+{% section 'collection-digital-template' %}
+<script>
+  
+  
+  $(document).ready(function() {
+    let currentCountry = sessionStorage.getItem('geoIPCountry');
+    
+    window.onload = function() {
+      if(!window.location.hash) {
+        window.location = window.location + '#loaded';
+        window.location.reload();
+      }
+    }
+    
+    if (sessionStorage.getItem('geoIPCountry') == null { window.onload }
+    
+    if ( currentCountry != 'United States') {
+      let rows = document.getElementsByClassName("sk-collection-row");
+	  let titles = document.getElementsByClassName("sk-collection-custom-body");
+      
+      for (let i = 0; i < rows.length; i++) {
+        rows[i].innerHTML = "";
+      }
+      
+      for (let i = 0; i < titles.length; i++) {
+        titles[i].innerHTML = "Online Cleaning Services Are Only Available In The United States";
+      }    
+    }
+  });
+  
+</script>

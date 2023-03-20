@@ -1,0 +1,91 @@
+{% unless current_variant.available %}
+  {% assign button_text = 'products.product.sold_out' | t %}
+{% else %}
+  {% assign button_text = 'products.product.add_to_cart' | t %}
+{% endunless %}
+
+{% form 'product', product, data-productid: product.id, class:'product-form' %}
+<!-- Begin ReCharge code -->
+{% if product.available %}{% include 'subscription-product' %}{% endif %}
+<!-- End ReCharge code -->
+
+  {% unless product.has_only_default_variant %}
+    {% for option in product.options_with_values %}
+      <div class="product-form__item supports-js">
+
+        {% if option.name != 'default' %}
+          <label class="single-option-selector__label{% unless section.settings.show_variant_labels %} single-option-selector__label--hidden{% endunless %}" for="{{ option.name | escape }}">{{ option.name }}</label>
+        {% endif %}
+
+        <select id="{{ option.name | escape }}" name="{{ option.name | escape }}" class="single-option-selector" data-option-input>
+          {% for value in option.values %}
+            {% assign safeValue = value | replace: '"', '&quot;' %}
+            <option value="{{ safeValue }}" {% if option.selected_value == value %}selected{% endif %}>{{ value }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    {% endfor %}
+  {% endunless %}
+
+  <select name="id" data-productid="{{ product.id }}" class="product-form__master-select supports-no-js" data-master-select>
+    {% for variant in product.variants %}
+      {% if variant.available %}
+
+        {% comment %}
+        Note: if you use option_selection.js, your select tag will be overwritten, meaning what you have inside <option> will not reflect what you coded below.
+        {% endcomment %}
+        <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+
+      {% else %}
+        <option disabled="disabled">
+          {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+        </option>
+      {% endif %}
+    {% endfor %}
+  </select>
+
+  {% if section.settings.show_quantity_selector %}
+	<div class="qty-wrap">
+      
+        <div class="sk-qty-div">
+          <label class="sk-qty-label {% unless section.settings.show_variant_labels %} product-form__quantity-label--hidden{% endunless %}" for="Quantity-{{ section.id }}">{{ 'products.product.quantity' | t }}<span class="sk-qty-hyphen">-</span></label>     
+          <input readonly class="sk-qty-input collection-sort__input" type="number" id="Quantity-{{ section.id }}" name="quantity" value="1" min="1" pattern="[0-9]*"> 
+        </div>
+
+        <div class="qty-buttons">      
+          <button class="qty-btn" onclick="this.parentNode.previousElementSibling.querySelector('.sk-qty-input').stepUp()" class="plus">
+            <img src="{{'up.svg' | asset_url}}" />
+          </button>
+
+           <button class="qty-btn down-btn" onclick="this.parentNode.previousElementSibling.querySelector('.sk-qty-input').stepDown()">
+              <img src="{{'down.svg' | asset_url}}" />
+           </button>
+        </div>
+      
+    </div>
+  {% endif %}
+	
+  {% comment %} Austin - 10/29/20 - Bytes Tech GeoIP migration changes, added paragraph element {% endcomment %}
+  <p><center style="display:none;font-weight: bold;font-size: 1.3rem;text-transform: capitalize !important;font-family:apercu;" id="bytsvarianterror"></center></p>
+  
+  <button style="width: 100%" class="atc-trigger sk-pdp-atc sk-atc sk-btn-primary {% if section.settings.enable_payment_button and current_variant.available %} sk-btn-primary {% endif %}"
+       
+    {% unless current_variant.available %} disabled="true"{% endunless %}
+    aria-label="{{ button_text }}" name="add"
+      >
+    {% if current_variant.available %}
+      ADD TO CART
+    {%endif%}
+    
+    {% unless current_variant.available  %}
+      SOLD OUT
+    {%endunless%}
+    
+  </button>
+{% endform %}
+
+{%comment%}
+add to cart attribute!!!
+ data-cart-submit
+        type="submit" name="add"
+{%endcomment%}

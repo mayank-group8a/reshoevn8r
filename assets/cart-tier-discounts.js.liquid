@@ -1,0 +1,340 @@
+/*-----------------------------------------------------------------------------/
+/ Custom Theme JS
+/-----------------------------------------------------------------------------*/
+var Shopify = Shopify || {};
+// ---------------------------------------------------------------------------
+// Money format handler
+// ---------------------------------------------------------------------------
+Shopify.money_format = theme.moneyFormat;
+
+Shopify.formatMoney = function(cents, format) {
+    if (typeof cents == 'string') {
+        cents = cents.replace('.', '');
+    }
+    var value = '';
+    var placeholderRegex = /\{\{\s*(\w+)\s*\}\}/;
+    var formatString = (format || this.money_format);
+
+    function defaultOption(opt, def) {
+        return (typeof opt == 'undefined' ? def : opt);
+    }
+
+    function formatWithDelimiters(number, precision, thousands, decimal) {
+        precision = defaultOption(precision, 2);
+        thousands = defaultOption(thousands, ',');
+        decimal = defaultOption(decimal, '.');
+        if (isNaN(number) || number == null) {
+            return 0;
+        }
+        number = (number / 100.0).toFixed(precision);
+        var parts = number.split('.'),
+            dollars = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands),
+            cents = parts[1] ? (decimal + parts[1]) : '';
+        return dollars + cents;
+    }
+    switch (formatString.match(placeholderRegex)[1]) {
+        case 'amount':
+            value = formatWithDelimiters(cents, 2);
+            break;
+        case 'amount_no_decimals':
+            value = formatWithDelimiters(cents, 0);
+            break;
+        case 'amount_with_comma_separator':
+            value = formatWithDelimiters(cents, 2, '.', ',');
+            break;
+        case 'amount_no_decimals_with_comma_separator':
+            value = formatWithDelimiters(cents, 0, '.', ',');
+            break;
+    }
+    return formatString.replace(placeholderRegex, value);
+};
+
+Shopify.addItem = function(variant_id, quantity, callback) {
+  var quantity = quantity || 1;
+  var params = {
+    type: 'POST',
+    url: '/cart/add.js',
+    data: 'quantity=' + quantity + '&id=' + variant_id,
+    dataType: 'json',
+    success: function(line_item) {
+      if ((typeof callback) === 'function') {
+        callback(line_item);
+      }
+      else {
+        Shopify.onItemAdded(line_item);
+      }
+    },
+    error: function(XMLHttpRequest, textStatus) {
+      Shopify.onError(XMLHttpRequest, textStatus);
+    }
+  };
+  jQuery.ajax(params);
+};
+
+// Austin - 11/4/20 - adding some misc Shopify functions to help with future development
+Shopify.onError = function(XMLHttpRequest, textStatus) {
+  // Shopify returns a description of the error in XMLHttpRequest.responseText.
+  // It is JSON.
+  // Example: {"description":"The product 'Amelia - Small' is already sold out.","status":500,"message":"Cart Error"}
+  var data = eval('(' + XMLHttpRequest.responseText + ')');
+  if (!!data.message) {
+    alert(data.message + '(' + data.status  + '): ' + data.description);
+  } else {
+    alert('Error : ' + Shopify.fullMessagesFromErrors(data).join('; ') + '.');
+  }
+};
+
+Shopify.fullMessagesFromErrors = function(errors) {
+  var fullMessages = [];
+  jQuery.each(errors, function(attribute, messages) {
+    jQuery.each(messages, function(index, message) {
+      fullMessages.push(attribute + ' ' + message);
+    });
+  });
+  return fullMessages
+}
+
+Shopify.onCartUpdate = function(cart) {
+  alert('There are now ' + cart.item_count + ' items in the cart.');
+};
+
+Shopify.onCartShippingRatesUpdate = function(rates, shipping_address) {
+  var readable_address = '';
+  if (shipping_address.zip) readable_address += shipping_address.zip + ', ';
+  if (shipping_address.province) readable_address += shipping_address.province + ', ';
+  readable_address += shipping_address.country
+  alert('There are ' + rates.length + ' shipping rates available for ' + readable_address +', starting at '+ Shopify.formatMoney(rates[0].price) +'.');
+};
+
+Shopify.onItemAdded = function(line_item) {
+  alert(line_item.title + ' was added to your shopping cart.');
+};
+
+Shopify.onProduct = function(product) {
+  alert('Received everything we ever wanted to know about ' + product.title);
+};
+
+Shopify.resizeImage = function(image, size) {
+  try {
+    if(size == 'original') { return image; }
+    else {
+      var matches = image.match(/(.*\/[\w\-\_\.]+)\.(\w{2,4})/);
+      return matches[1] + '_' + size + '.' + matches[2];
+    }
+  } catch (e) { return image; }
+};
+
+
+/* 
+   =======================================
+           Enable Tier Discounts
+   =======================================
+*/
+const enable = false;
+
+
+/* 
+   =======================================
+         Configure Tiers & Discounts
+   =======================================
+*/
+const discountImgs = [
+    { img: 'https://cdn.shopify.com/s/files/1/0340/6695/6423/files/R8_VDAY_SALE_WEB_ICONS_1.png?v=1611949759', color: 'rgb(255,0,0)' },
+    { img: 'https://cdn.shopify.com/s/files/1/0340/6695/6423/files/R8_VDAY_SALE_WEB_ICONS_2.png?v=1611949759', color: 'rgb(255,0,0)' }, // this is optional
+    { img: 'https://cdn.shopify.com/s/files/1/0340/6695/6423/files/R8_VDAY_SALE_WEB_ICONS_3.png?v=1611949759', color: 'rgb(255,0,0)' } // this is optional
+];
+
+const tiers = [
+    {
+        range: { min: 0, max: 19 },
+        discount: 15
+    },
+    {
+        range: { min: 20, max: 39 },
+        discount: 20
+    },
+    {
+        range: { min: 40, max: 59 },
+        discount: 25
+    }
+]
+
+const recommendation_blacklist = [
+    'Gift Card',
+    'Digital',
+    'Executive Club',
+    'Limited Edition'
+];
+
+const message = 'You are only [DELTA] away from getting a [DISCOUNT]% discount! Add from recommendations below or from our <a href="https://reshoevn8r.com/collections/shoe-care-products">collection</a>!';
+
+
+/* 
+   =======================================
+          Main Code - Do Not Touch
+   =======================================
+*/
+const getRandom = (min, max) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+const getProducts = async () => {
+    let res = await $.getJSON('/products.json');
+
+    return res.products;
+}
+
+const getClasses = () => {
+    let recs = document.querySelectorAll('.tier-rec'), classes = [];
+
+    recs.forEach(rec => {
+        rec.className.split(' ').forEach(e => classes.push(e));
+    });
+
+    return classes;
+}
+
+const getRecommendation = (products, delta) => {
+    let recs = [], min = 500; // default minimum offset value of 500 (no products with greater price)
+
+    products.forEach(product => {
+        let variant = product.variants[0], offset = variant.price - delta; // add currency conversion
+
+        if (offset >= 0 && offset <= min) {
+            if (offset === min) {
+                recs.push(product);
+            } else {
+                min = offset;
+                recs[0] = product;
+            }
+        }
+    });
+
+    let randomIndex = getRandom(0, (recs.length - 1)), rec = (recs.length > 0) ? recs[randomIndex] : recs[0];
+
+    return { rec: rec, recs: recs };
+}
+
+const clearAlerts = (selector) => {
+    if (document.querySelectorAll(selector).length > 0) document.querySelectorAll(selector).forEach(e => e.remove());
+}
+
+const refresh = () => $(document).trigger('refresh-cart');
+
+(() => {
+    const getCart = async () => await $.getJSON('/cart.js'), rate = Shopify.currency.rate;
+
+    $(document).on('cart_update_done', async () => {
+        console.log('----- CART UPDATED -----');
+
+        clearAlerts('.discount-alert');
+        clearAlerts('.tier-rec');
+        clearAlerts('.free-gift-progress');
+
+        let curTier, cart = await getCart(), total = Math.ceil((cart.original_total_price / 100) / rate), textColor;
+
+        tiers.forEach(tier => {
+            let min = tier.range.min * rate, max = tier.range.max * rate;
+
+            if (min <= total && total <= max) {
+                let delta = ((max + 1) - total) * 100, alert = document.createElement('div'), discountImg = discountImgs[getRandom(0, 2)], html = `
+                <a href="#" data-cart-item-href="">
+                    <img src="${discountImg.img}" />
+                </a>
+                <div class="cart-drawer__item-content">
+                    ${message.replace('[DELTA]', Shopify.formatMoney(delta)).replace('[DISCOUNT]', tier.discount)}
+                </div>
+                `;
+                        
+                (alert.classList.add('cart-drawer__item')), (alert.classList.add('discount-alert')), (alert.classList.add('visible')), (alert.innerHTML = html);
+                    
+                clearAlerts('.discount-alert');
+                document.querySelector('div.cart-drawer__item-list').prepend(alert);
+
+                curTier = tier;
+                textColor = discountImg.color;
+            }
+        });
+
+        // --------- Product Recommendation ---------
+        if (curTier) { // if (Shopify.currency.active === 'USD' && curTier) {
+            clearAlerts('.tier-rec');
+
+            let curIndex = tiers.indexOf(curTier), recTiers = tiers.slice(curIndex, curIndex + 3), curDiscount = (tiers[curIndex - 1]) ? tiers[curIndex - 1].discount : 0, recArr = [];
+
+            for (let i = 0; i < recTiers.length; i++) {
+                let tier = recTiers[i], delta = ((tier.range.max * Shopify.currency.rate) + 1) - total,
+                rec = document.createElement('div'), 
+                products = (await getProducts()).filter(e => {
+                    let found = false;
+
+                    recommendation_blacklist.forEach(tag => {
+                        if (e.tags.includes(tag)) {
+                            found = true;
+                        }
+                    });
+                    
+                    return !found;
+                }),
+                product_recs = getRecommendation(products, (delta)), product = product_recs.rec;
+
+                let log = {
+                    tier: tier.discount,
+                    products: products,
+                    rec_price: product.variants[0].price,
+                    rate: Shopify.currency.rate,
+                    range: { min: tier.range.min * Shopify.currency.rate, max: tier.range.max * Shopify.currency.rate },
+                    recs: product_recs.recs
+                };
+
+                console.log(log);
+
+                let html = `
+                <a href="/products/${product.handle}" data-cart-item-href="">
+                    <img src="${(product.images[1]) ? product.images[1].src : product.images[0].src}" />
+                </a>
+                <div class="cart-drawer__item-content">
+                    <strong style="color: ${textColor}; font-weight: 900 !important;">Unlock ${tier.discount}% Savings</strong></br>${product.title} ${Shopify.formatMoney((product.variants[0].price * 100))}</br><button type="button" class="rec-btn rec-btn-${tier.discount} btn-link">Add to cart</button>
+                </div>
+                `;
+
+                (rec.classList.add('cart-drawer__item')), (rec.classList.add('discount-alert')), (rec.classList.add('tier-rec')), (rec.classList.add(`rec-${tier.discount}`)), (rec.classList.add('visible')), (rec.innerHTML = html);
+                    
+                if (product.variants[0].available && !getClasses().includes(`rec-${tier.discount}`)) {
+                    recArr[i] = { el: rec, product: product, tier: tier };
+                }
+            }
+
+            recArr.forEach(e => {
+                if (!getClasses().includes(`rec-${e.tier.discount}`)) document.querySelector('div.cart-drawer__item-list').appendChild(e.el);
+
+                $(`.rec-btn-${e.tier.discount}`).on('click', () => Shopify.addItem(e.product.variants[0].id, 1, res => {
+                    refresh();
+                }));
+            })
+        }
+
+        _.debounce(productRec(), 100);
+    });
+
+    $(document).on('drawer_close_done', () => {
+        let el = document.querySelector('.discount-alert');
+        if (el !== null) el.remove();
+		document.querySelector('#gorgias-web-messenger-container').style.display = 'block';
+    });
+
+	document.querySelectorAll('.js-ajax-cart-drawer-trigger').forEach(el => {
+  		el.addEventListener('click', () => {
+    		document.querySelector('#gorgias-web-messenger-container').style.display = 'none';
+		});
+	});
+
+	document.querySelectorAll('.atc-trigger').forEach(el => {
+  		el.addEventListener('click', () => {
+    		document.querySelector('#gorgias-web-messenger-container').style.display = 'none';
+		});
+	});
+})(jQuery);

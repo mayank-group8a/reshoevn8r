@@ -1,0 +1,27 @@
+<div class="ec-col ec-product" style="max-width: 450px; align-items: flex-start;">
+    <h4 style="font-weight: 900; margin: 0 auto;">{{ title | uppercase }}</h4>
+    
+    <div class="ec-product-container">
+        <img class="ec-product-image" src="{{ product.featured_image.src | img_url: 'grande' }}">
+        
+        <div class="ec-product-check">
+            <input class="ec-input ec-check" type="checkbox" id="{{ product.variants[0].sku }}" name="{{ product.variants[0].sku }}" value="{{ product.variants[0].sku }}" disabled="disabled" checked>
+            <label class="ec-label" for="{{ product.variants[0].sku }}"></label>
+        </div>
+    </div>
+
+    <p style="font-weight: 900;">{{ product.title }} - {{ product.price | money }}</p>
+
+    <p>{{ desc }}</p>
+
+    <p class="ec-accordion" style="font-weight: 900;">{{ label }}:</p>
+    <ul class="ec-panel" style="padding-left: 1.5rem">
+        {% assign arr = product.metafields.accentuate.product_contents | split: ", " %}
+        
+        {% for item in arr %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+
+    {% render 'ec-product-form', product: product, atc_msg: atc, atc_state: atc_state %}
+</div>

@@ -1,0 +1,11 @@
+{%- layout none -%}
+{%- capture output -%}
+    {%- for vendor in shop.vendors -%}{% comment %}EasylockdownFilterBegin{% endcomment %}{% capture easylockdownFilter %}{% render 'easylockdown_filter_search' with vendor, easylockdownRender: true, easylockdownItemSelectorOff: easylockdownItemSelectorOff %}{% endcapture %}{% assign easylockdownFilter = easylockdownFilter | strip %}{% if easylockdownFilter == 'continue' %}{% continue %}{% else %}{{ easylockdownFilter }}{% endif %}{% comment %}EasylockdownFilterEnd{% endcomment %}
+        {%- if output contains vendor -%}
+        {%- else -%}
+            "{{vendor}}"
+            {%- unless forloop.last == true -%},{%- endunless -%}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endcapture -%}
+{{ output | strip_newlines | prepend: '[' | append: ']' }}
