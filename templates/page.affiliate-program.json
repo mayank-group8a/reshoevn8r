@@ -1,0 +1,25 @@
+{
+    "sections": {
+      "image-with-text-overlay": {
+        "type": "hero",
+        "settings": {
+          "hero_size": "small",
+          "image": "shopify:\/\/shop_images\/Ik_r8wEe0tz.jpg",
+          "alignment": "center center",
+          "title": "BECOME A BRAND AFFILIATE",
+          "text": "<p>Help share RESHOEVN8R's top-of-the-line shoe care products with your community while earning commission, free products, and extra perks and incentives.<\/p>",
+          "text_size": "medium",
+          "use_second_button": false,
+          "button_label": "APPLY NOW",
+          "button_link": "https:\/\/www.avantlink.com\/signup\/publisher-united-states\/?merchant=26409",
+          "show_overlay": true,
+          "overlay_color": "#000000",
+          "overlay_text": "#ffffff",
+          "overlay_opacity": "0.5"
+        }
+      }
+    },
+    "order": [
+      "image-with-text-overlay"
+    ]
+  }
