@@ -1,25 +1,69 @@
 {
-    "sections": {
-      "image-with-text-overlay": {
-        "type": "hero",
-        "settings": {
-          "hero_size": "small",
-          "image": "shopify:\/\/shop_images\/Ik_r8wEe0tz.jpg",
-          "alignment": "center center",
-          "title": "BECOME A BRAND AFFILIATE",
-          "text": "<p>Help share RESHOEVN8R's top-of-the-line shoe care products with your community while earning commission, free products, and extra perks and incentives.<\/p>",
-          "text_size": "medium",
-          "use_second_button": false,
-          "button_label": "APPLY NOW",
-          "button_link": "https:\/\/www.avantlink.com\/signup\/publisher-united-states\/?merchant=26409",
-          "show_overlay": true,
-          "overlay_color": "#000000",
-          "overlay_text": "#ffffff",
-          "overlay_opacity": "0.5"
-        }
+  "sections": {
+    "image-with-text-overlay": {
+      "type": "hero",
+      "settings": {
+        "hero_size": "small",
+        "image": "shopify:\/\/shop_images\/Ik_r8wEe0tz.jpg",
+        "alignment": "center center",
+        "title": "BECOME A BRAND AFFILIATE",
+        "text": "<p>Help share RESHOEVN8R's top-of-the-line shoe care products with your community while earning commission, free products, and extra perks and incentives.<\/p>",
+        "text_size": "medium",
+        "use_second_button": false,
+        "button_label": "APPLY NOW",
+        "button_link": "https:\/\/www.avantlink.com\/signup\/publisher-united-states\/?merchant=26409",
+        "show_overlay": true,
+        "overlay_color": "#000000",
+        "overlay_text": "#ffffff",
+        "overlay_opacity": "0.5"
       }
     },
-    "order": [
-      "image-with-text-overlay"
-    ]
-  }
+    "de301c3b-cdb1-4368-8262-a067ed0888a0": {
+      "type": "featured-column",
+      "blocks": {
+        "template--15962909278388__de301c3b-cdb1-4368-8262-a067ed0888a0-167938094612ba4352-0": {
+          "type": "text_block",
+          "settings": {
+            "enable_image": true,
+            "image": "shopify:\/\/shop_images\/PNkGeR7NZvi.png",
+            "title": "JOIN",
+            "text": "<p>It's free and easy to become an affiliate with other like-minded creators, influencers, bloggers looking to earn extra money and help their community elevate their shoe care.<\/p>"
+          }
+        },
+        "template--15962909278388__de301c3b-cdb1-4368-8262-a067ed0888a0-167938094612ba4352-1": {
+          "type": "text_block",
+          "settings": {
+            "enable_image": true,
+            "image": "shopify:\/\/shop_images\/qPa8bICFxID.png",
+            "title": "PROMOTE",
+            "text": "<p>Promote any product you'd like! Whether you've got a large or small audience we make it simple to help you monetize your passion for sneaker care.<\/p>"
+          }
+        },
+        "template--15962909278388__de301c3b-cdb1-4368-8262-a067ed0888a0-167938094612ba4352-2": {
+          "type": "text_block",
+          "settings": {
+            "enable_image": true,
+            "image": "shopify:\/\/shop_images\/qzcW4vemS0B.png",
+            "title": "EARN",
+            "text": "<p>Earn up to 20% in cash commission from all qualifying purchases you generate, plus incentives, annual birthday gifts, a chance to be featured on our social accounts (over 2.5 million followers) and so much more.<\/p>"
+          }
+        }
+      },
+      "block_order": [
+        "template--15962909278388__de301c3b-cdb1-4368-8262-a067ed0888a0-167938094612ba4352-0",
+        "template--15962909278388__de301c3b-cdb1-4368-8262-a067ed0888a0-167938094612ba4352-1",
+        "template--15962909278388__de301c3b-cdb1-4368-8262-a067ed0888a0-167938094612ba4352-2"
+      ],
+      "settings": {
+        "title": "HOW IT WORKS",
+        "align_text": "center",
+        "button_label": "Apply now",
+        "button_link": "https:\/\/www.avantlink.com\/signup\/publisher-united-states\/?merchant=26409"
+      }
+    }
+  },
+  "order": [
+    "image-with-text-overlay",
+    "de301c3b-cdb1-4368-8262-a067ed0888a0"
+  ]
+}
